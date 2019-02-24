@@ -21,8 +21,14 @@ palmeidaprog::compiler::Scanner::Scanner(const string &arquivo) :
 
 palmeidaprog::compiler::Scanner::Scanner(char *arquivo) :
     arquivo(string(arquivo)) {
+    abreArquivo();
 }
 
 palmeidaprog::compiler::Scanner::~Scanner() {
 
 }
+
+void palmeidaprog::compiler::Scanner::abreArquivo() {
+
+}
+

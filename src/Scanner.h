@@ -9,13 +9,16 @@
 #define COMPILER_SCANNER_H
 
 #include "IScanner.h"
+#include <fstream>
 
 using std::string;
+using std::ifstream;
 
 namespace palmeidaprog { namespace compiler {
     class Scanner : public IScanner {
         string arquivo, valor;
         char ultimoLido;
+        ifstream codigoFonte;
 
     public:
         Scanner(const string &arquivo);
@@ -24,6 +27,10 @@ namespace palmeidaprog { namespace compiler {
 
         Token scanNext() override;
         string getValor() override;
+
+    private:
+        void abreArquivo();
+        void fechaArquivo();
     };
 }}
 
