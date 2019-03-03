@@ -18,7 +18,7 @@ namespace palmeidaprog { namespace compiler {
     public:
         virtual ~IScanner() { }
         virtual Token scanNext() = 0;
-        virtual std::string getValor() = 0;
+        virtual string getLexema() = 0;
     };
 }}
 

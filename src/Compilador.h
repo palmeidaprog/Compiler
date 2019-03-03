@@ -27,6 +27,8 @@ namespace palmeidaprog { namespace compiler {
         Compilador(char *arquivo);
         Compilador(const string &arquivo);
         virtual ~Compilador();
+
+        void compilar();
     };
 }}
 

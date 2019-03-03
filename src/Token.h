@@ -19,9 +19,9 @@ namespace palmeidaprog { namespace compiler {
         MAIOR, MENOR, MAIOR_IGUAL, MENOR_IGUAL, IGUAL, DIFERENTE, // op. relac.
         // especiaisa
         ABRE_CHAVE, FECHA_CHAVE, ABRE_PARENTESES, FECHA_PARENTESES,
-        VIRGULA, PONTO_VIRGULA
+        VIRGULA, PONTO_VIRGULA, FIM_ARQUIVO,
+        INVALIDO
     };
 }}
-
 
 #endif //COMPILER_TOKEN_H

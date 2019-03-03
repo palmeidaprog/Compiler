@@ -3699,7 +3699,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFpH8FNs7bIyw0="
 									},
-									"name": "getValor",
+									"name": "getLexema",
 									"visibility": "public",
 									"isStatic": false,
 									"isLeaf": false,

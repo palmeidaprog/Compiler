@@ -20,3 +20,10 @@ palmeidaprog::compiler::Compilador::Compilador(const string &arquivo) :
 palmeidaprog::compiler::Compilador::~Compilador() {
 
 }
+
+void palmeidaprog::compiler::Compilador::compilar() {
+    try {
+
+    } catch ()
+
+}
