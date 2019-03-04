@@ -47,7 +47,7 @@ namespace palmeidaprog { namespace compiler {
         void fechaArquivo();
         char nextChar();
         char proximo();
-        bool simboloIsolado();
+        Token simbolosIsolados();
         void leNumeros();
         void primeiraLeitura();
         Token identifica();

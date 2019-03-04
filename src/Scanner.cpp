@@ -57,12 +57,78 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
     }
 
     // simbolos isolados
+    Token retorno = Token::INVALIDO;
     if(ultimoLido == '+') {
-        return Token::SOMA;
+        retorno = Token::SOMA;
+    } else if(ultimoLido == '-') {
+        retorno = Token::SUBSTRACAO;
+    } else if(ultimoLido == '*') {
+        retorno = Token::MULTIPLICACAO;
+    } else if(ultimoLido == '/') {
+        retorno = Token::DIVISAO;
+    } else if(ultimoLido == ')') {
+        retorno = Token::FECHA_PARENTESES;
+    } else if(ultimoLido == '(') {
+        retorno = Token::ABRE_PARENTESES;
+    } else if(ultimoLido == '{') {
+        retorno = Token::ABRE_CHAVE;
+    } else if(ultimoLido == '}') {
+        retorno = Token::FECHA_CHAVE;
+    } else if(ultimoLido == ',') {
+        retorno = Token::VIRGULA;
+    } else if(ultimoLido == ';') {
+        retorno = Token::PONTO_VIRGULA;
+    } else if(ultimoLido == EOF) {
+        return Token::FIM_ARQUIVO;
+    } else if(ultimoLido == '\n') {
+        proximo();
+        ++linha;
+        coluna = 0;
+        return scanNext();
     }
 
+    // retorno do simbolo isolado
+    primeiraLeitura();
+    if(retorno != Token::INVALIDO) {
+        return retorno;
+    }
 
-
+    // Atribuicão e operadores relacionais (= == > >= < <= !=)
+    if(ultimoLido == '=') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::IGUAL;
+        } else {
+            return Token::ATRIBUICAO;
+        }
+    } else if(ultimoLido == '>') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::MAIOR_IGUAL;
+        } else {
+            return Token::MAIOR;
+        }
+    } else if(ultimoLido == '>') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::MENOR_IGUAL;
+        } else {
+            return Token::MENOR;
+        }
+    } else if(ultimoLido == '!') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::DIFERENTE;
+        } else {
+            return Token::INVALIDO;
+        }
+    } else {
+        return Token::INVALIDO;
+    }
 }
 
 string palmeidaprog::compiler::Scanner::getLexema() {
@@ -109,11 +175,6 @@ char palmeidaprog::compiler::Scanner::proximo() {
 
 // 59 a 62 > < = ;
 // 40 a 45  ( ) * + , -
-bool palmeidaprog::compiler::Scanner::simboloIsolado() {
-    return isspace(ultimoLido) || (ultimoLido >= 59 && ultimoLido <= 62) ||
-           ultimoLido == '!' || (ultimoLido >= 40 && ultimoLido <= 45) ||
-           ultimoLido == '/' || ultimoLido == '{' || ultimoLido == '}';
-}
 
 void palmeidaprog::compiler::Scanner::leNumeros() {
     while(isnumber(ultimoLido)) {
