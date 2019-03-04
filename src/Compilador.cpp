@@ -22,8 +22,22 @@ palmeidaprog::compiler::Compilador::~Compilador() {
 }
 
 void palmeidaprog::compiler::Compilador::compilar() {
-    try {
+    debugScanner();
+}
 
-    } catch ()
+void palmeidaprog::compiler::Compilador::debugScanner() {
+    Token token;
+    do {
+        try{
+            token = scanner->scanNext();
+        } catch (ScannerException &e) {
+            cout << e.mensagem() << endl;
+        }
+        cout << token << "(" << scanner->getLexema() << ")" << endl;
+    } while(token != Token::FIM_ARQUIVO);
+}
+
+void palmeidaprog::compiler::Compilador::tokenToStr(
+        palmeidaprog::compiler::Token token) {
 
 }

@@ -8,7 +8,9 @@
 #ifndef COMPILER_COMPILER_H
 #define COMPILER_COMPILER_H
 
+#include <iostream>
 #include <memory>
+#include "Token.h"
 #include "IScanner.h"
 #include "ScannerFactory.h"
 #include "Scanner.h"
@@ -17,6 +19,8 @@ using std::make_unique;
 using palmeidaprog::compiler::IScanner;
 using std::string;
 using std::unique_ptr;
+using std::cout;
+using std::endl;
 
 namespace palmeidaprog { namespace compiler {
     class Compilador {
@@ -29,6 +33,9 @@ namespace palmeidaprog { namespace compiler {
         virtual ~Compilador();
 
         void compilar();
+    private:
+        void debugScanner();
+        void tokenToStr(Token token);
     };
 }}
 

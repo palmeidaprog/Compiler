@@ -16,6 +16,7 @@ using palmeidaprog::compiler::Compilador;
 int main(int argc, char *argv[]) {
     if(argc == 2) {
         Compilador compilador(argv[1]);
+        compilador.compilar();
     } else if(argc == 1) {
         cerr << "Você precisa especificar o arquivo fonte a ser compilado"
             << endl
