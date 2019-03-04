@@ -16,7 +16,7 @@ using std::vector;
 using std::unique_ptr;
 
 namespace palmeidaprog { namespace compiler {
-    // T = Valor que será o valor da entrada para o automato
+    // T = Valor que será o lexema da entrada para o automato
     // V = Qualquer retorno desejado pelo implementador, no caso do analisador
     //     léxico o retorno será o Token
     template <typename V, typename T = char>

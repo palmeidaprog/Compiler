@@ -12,32 +12,32 @@
 
 #include <stdexcept>
 #include <string>
+#include <sstream>
 
 using std::exception;
 using std::string;
+using std::stringstream;
 
-namespace palmeidaprog { namespace compilter {
-    class ScannerException : public exception {
-        const unsigned linha, coluna;
-        const string mensagem;
+namespace palmeidaprog { namespace compiler {
+    class ScannerException : public std::runtime_error {
+            const unsigned linha, coluna;
 
-    public:
-        ScannerException(const string &mensagem, unsigned linha,
-                unsigned coluna);
-        virtual ~ScannerException();
+        public:
+            ScannerException(const string &mensagem, unsigned linha,
+                    unsigned coluna);
+            virtual ~ScannerException();
 
-        unsigned getLinha() const {
-            return linha;
-        }
+            unsigned getLinha() const {
+                return linha;
+            }
 
-        unsigned getColuna() const {
-            return coluna;
-        }
+            unsigned getColuna() const {
+                return coluna;
+            }
 
-        const string &getMensagem() const {
-            return mensagem;
-        }
-    };
+            const string mensagem() const noexcept;
+
+        };
 }}
 
 

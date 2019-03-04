@@ -2619,7 +2619,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "-valor: string",
+											"text": "-lexema: string",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -3610,7 +3610,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFpH8FNs7bIyw0="
 									},
-									"name": "valor",
+									"name": "lexema",
 									"visibility": "private",
 									"isStatic": false,
 									"isLeaf": false,

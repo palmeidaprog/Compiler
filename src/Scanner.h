@@ -21,7 +21,7 @@ using std::make_unique;
 
 namespace palmeidaprog { namespace compiler {
     class Scanner : public IScanner {
-        string arquivo, valor;
+        string arquivo, lexema;
         char ultimoLido;
         int linha, coluna, colunaLexema;
         unique_ptr<ifstream> codigoFonte;
@@ -48,10 +48,9 @@ namespace palmeidaprog { namespace compiler {
         char nextChar();
         char proximo();
         bool simboloIsolado();
-        bool finalizaNumero();
-        bool verificaFloat();
         void leNumeros();
         void primeiraLeitura();
+        Token identifica();
     };
 }}
 

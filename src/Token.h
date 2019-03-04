@@ -17,7 +17,7 @@ namespace palmeidaprog { namespace compiler {
         IDENTIFICADOR,
         SOMA, SUBSTRACAO, MULTIPLICACAO, DIVISAO, ATRIBUICAO, // oparitmetica
         MAIOR, MENOR, MAIOR_IGUAL, MENOR_IGUAL, IGUAL, DIFERENTE, // op. relac.
-        // especiaisa
+        // especiais
         ABRE_CHAVE, FECHA_CHAVE, ABRE_PARENTESES, FECHA_PARENTESES,
         VIRGULA, PONTO_VIRGULA, FIM_ARQUIVO,
         INVALIDO

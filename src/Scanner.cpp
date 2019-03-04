@@ -8,7 +8,6 @@
 #include "Scanner.h"
 
 palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
-    int colunaLexema;
 
     while(isspace(ultimoLido)) {
         ultimoLido = nextChar();
@@ -42,22 +41,32 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
             proximo();
             return Token::LETRA_VALOR;
         } else {
-            throw 
+            throw ScannerException(string("Valor char nao pode ser no formato"
+                + lexema), linha, colunaLexema);
         }
     }
-
 
     // identificador
     if(isalpha(ultimoLido)) {
         primeiraLeitura();
-        while(isalpha(ultimoLido) || isnumber(ultimoLido) || ) {
+        while(isalpha(ultimoLido) || isnumber(ultimoLido)
+                || ultimoLido == '_') {
             proximo();
         }
+        identifica();
     }
+
+    // simbolos isolados
+    if(ultimoLido == '+') {
+        return Token::SOMA;
+    }
+
+
+
 }
 
 string palmeidaprog::compiler::Scanner::getLexema() {
-    return valor;
+    return lexema;
 }
 
 palmeidaprog::compiler::Scanner::Scanner(const string &arquivo) :
@@ -94,7 +103,7 @@ void palmeidaprog::compiler::Scanner::fechaArquivo() {
 }
 
 char palmeidaprog::compiler::Scanner::proximo() {
-    valor += ultimoLido;
+    lexema += ultimoLido;
     ultimoLido = nextChar();
 }
 
@@ -106,17 +115,6 @@ bool palmeidaprog::compiler::Scanner::simboloIsolado() {
            ultimoLido == '/' || ultimoLido == '{' || ultimoLido == '}';
 }
 
-bool palmeidaprog::compiler::Scanner::finalizaNumero() {
-    return simboloIsolado() || isalpha(ultimoLido) || ultimoLido == '_';
-}
-
-bool palmeidaprog::compiler::Scanner::verificaFloat() {
-    while(isnumber(ultimoLido)) {
-        proximo();
-    }
-    return finalizaNumero();
-}
-
 void palmeidaprog::compiler::Scanner::leNumeros() {
     while(isnumber(ultimoLido)) {
         proximo();
@@ -126,6 +124,30 @@ void palmeidaprog::compiler::Scanner::leNumeros() {
 void palmeidaprog::compiler::Scanner::primeiraLeitura() {
     colunaLexema = coluna;
     proximo();
+}
+
+palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::identifica() {
+    if(lexema == "if") {
+        return Token::IF;
+    } else if(lexema == "do") {
+        return Token::DO;
+    } else if(lexema == "for") {
+        return Token::FOR;
+    } else if(lexema == "while") {
+        return Token::WHILE;
+    } else if(lexema == "else") {
+        return Token::ELSE;
+    } else if(lexema == "main") {
+        return Token::MAIN;
+    } else if(lexema == "int") {
+        return Token::INTEIRO;
+    } else if(lexema == "float") {
+        return Token::FLOAT;
+    } else if(lexema == "char") {
+        return Token::LETRA;
+    } else {
+        return Token::IDENTIFICADOR;
+    }
 }
 
 
