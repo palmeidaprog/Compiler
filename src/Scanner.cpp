@@ -9,6 +9,13 @@
 
 palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
 
+    lexema = "";
+
+    if(ultimoLido == '\n') {
+        ultimoLido = nextChar();
+        novaLinha();
+    }
+
     while(isspace(ultimoLido)) {
         ultimoLido = nextChar();
     }
@@ -41,8 +48,9 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
             proximo();
             return Token::LETRA_VALOR;
         } else {
-            throw ScannerException(string("Valor char nao pode ser no formato"
-                + lexema), linha, colunaLexema);
+            throw ScannerException(string("Valor char nao pode ser no formato: "
+                + lexema + ultimoLido), linha, colunaLexema);
+            return Token::INVALIDO;
         }
     }
 
@@ -53,7 +61,7 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
                 || ultimoLido == '_') {
             proximo();
         }
-        identifica();
+        return identifica();
     }
 
     // simbolos isolados
@@ -65,7 +73,18 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
     } else if(ultimoLido == '*') {
         retorno = Token::MULTIPLICACAO;
     } else if(ultimoLido == '/') {
-        retorno = Token::DIVISAO;
+        primeiraLeitura();
+        if(ultimoLido == '/') { // comentario simples
+            while (ultimoLido != '\n' && ultimoLido != EOF) {
+                ultimoLido = nextChar();
+            }
+            return scanNext();
+        } else if(ultimoLido == '*') {
+            comentarios();
+            return scanNext();
+        } else {
+            return Token::DIVISAO;
+        }
     } else if(ultimoLido == ')') {
         retorno = Token::FECHA_PARENTESES;
     } else if(ultimoLido == '(') {
@@ -88,8 +107,8 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
     }
 
     // retorno do simbolo isolado
-    primeiraLeitura();
     if(retorno != Token::INVALIDO) {
+        primeiraLeitura();
         return retorno;
     }
 
@@ -168,7 +187,7 @@ void palmeidaprog::compiler::Scanner::fechaArquivo() {
     }
 }
 
-char palmeidaprog::compiler::Scanner::proximo() {
+void palmeidaprog::compiler::Scanner::proximo() {
     lexema += ultimoLido;
     ultimoLido = nextChar();
 }
@@ -209,6 +228,26 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::identifica() {
     } else {
         return Token::IDENTIFICADOR;
     }
+}
+
+void palmeidaprog::compiler::Scanner::comentarios() {
+    char temp;
+    bool stop = false;
+    while(!stop || ultimoLido != EOF) {
+        temp = nextChar();
+        if(temp == '\n') {
+            novaLinha();
+        }
+        if(ultimoLido == '*' && temp == '/') {
+            stop = true;
+        }
+        ultimoLido = temp;
+    }
+}
+
+void palmeidaprog::compiler::Scanner::novaLinha() {
+    ++linha;
+    coluna = 0;
 }
 
 

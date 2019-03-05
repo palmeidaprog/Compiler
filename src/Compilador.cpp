@@ -14,7 +14,7 @@ palmeidaprog::compiler::Compilador::Compilador(char *arquivo) :
 }
 
 palmeidaprog::compiler::Compilador::Compilador(const string &arquivo) :
-    scanner(ScannerFactory::getInstance(arquivo)){
+    scanner(ScannerFactory::getInstance(arquivo)), arquivo(arquivo){
 }
 
 palmeidaprog::compiler::Compilador::~Compilador() {
@@ -26,18 +26,18 @@ void palmeidaprog::compiler::Compilador::compilar() {
 }
 
 void palmeidaprog::compiler::Compilador::debugScanner() {
-    Token token;
-    do {
-        try{
+    Token token = Token::FIM_ARQUIVO;
+    try {
+        do {
             token = scanner->scanNext();
-        } catch (ScannerException &e) {
-            cout << e.mensagem() << endl;
-        }
-        cout << token << "(" << scanner->getLexema() << ")" << endl;
-    } while(token != Token::FIM_ARQUIVO);
+            cout << token << "(" << scanner->getLexema() << ")" << endl;
+        } while(token != Token::FIM_ARQUIVO);
+    } catch (const ScannerException &e) {
+        cout << "[Linha:" << e.getLinha() << " Coluna:" << e.getColuna()
+             << "] " <<  e.what() << endl;
+    }
 }
 
 void palmeidaprog::compiler::Compilador::tokenToStr(
         palmeidaprog::compiler::Token token) {
-
 }

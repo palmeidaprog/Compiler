@@ -11,9 +11,10 @@
 #include <iostream>
 #include <memory>
 #include "Token.h"
+#include "ScannerException.h"
 #include "IScanner.h"
 #include "ScannerFactory.h"
-#include "Scanner.h"
+
 
 using std::make_unique;
 using palmeidaprog::compiler::IScanner;

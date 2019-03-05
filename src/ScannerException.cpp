@@ -8,21 +8,29 @@
 #include "ScannerException.h"
 
 palmeidaprog::compiler::ScannerException::ScannerException(
-        const string &mensagem, unsigned linha, unsigned coluna) :
-        linha(linha), coluna(coluna), runtime_error(mensagem) {
+        const string &mensagem, unsigned linha, unsigned coluna) noexcept :
+        runtime_error(mensagem), linha(linha), coluna(coluna) {
+
 }
 
 palmeidaprog::compiler::ScannerException::~ScannerException() {
 
 }
 
-const string palmeidaprog::compiler::ScannerException::mensagem() const
-        noexcept {
-        stringstream s;
-        s << "Scanner Linha: " << linha << " Coluna: " << coluna
-                   << " :" << this->what();
-        return s.str();
-    }
+/*string palmeidaprog::compiler::ScannerException::msg() const {
+    stringstream s;
+    s << "Scanner Linha: " << linha << " Coluna: " << coluna
+               << " :" << this->what();
+    return s.str();
+}*/
+
+palmeidaprog::compiler::ScannerException::ScannerException(const string &s)
+        noexcept: runtime_error(s), linha(0), coluna(0) {
+
+}
+
+const char *palmeidaprog::compiler::ScannerException::what() const noexcept {
+    return runtime_error::what();
 }
 
 

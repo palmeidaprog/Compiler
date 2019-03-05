@@ -8,11 +8,12 @@
 #ifndef COMPILER_SCANNER_H
 #define COMPILER_SCANNER_H
 
-#include "IScanner.h"
-#include "ScannerException.h"
+
 #include <fstream>
 #include <cctype>
 #include <memory>
+#include "IScanner.h"
+#include "ScannerException.h"
 
 using std::string;
 using std::ifstream;
@@ -46,11 +47,13 @@ namespace palmeidaprog { namespace compiler {
         void abreArquivo();
         void fechaArquivo();
         char nextChar();
-        char proximo();
+        void proximo();
         Token simbolosIsolados();
         void leNumeros();
         void primeiraLeitura();
         Token identifica();
+        void comentarios();
+        void novaLinha();
     };
 }}
 

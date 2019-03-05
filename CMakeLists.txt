@@ -4,12 +4,14 @@ project(Compiler)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(Compiler src/main.cpp
-        src/Compilador.cpp
         src/Compilador.h
+        src/Compilador.cpp
         src/IScanner.h
-        src/main.cpp
-        src/Scanner.cpp
         src/Scanner.h
-        src/ScannerFactory.cpp
+        src/Scanner.cpp
         src/ScannerFactory.h
-        src/Token.h)
+        src/ScannerFactory.cpp
+        src/ScannerException.h
+        src/ScannerException.cpp
+        src/Token.h
+        src/Token.cpp)
