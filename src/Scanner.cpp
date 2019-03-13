@@ -8,7 +8,6 @@
 #include "Scanner.h"
 
 palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
-
     lexema = "";
 
     if(ultimoLido == '\n') {
@@ -43,13 +42,17 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
     // char
     if(ultimoLido == '\'') {
         primeiraLeitura();
+        if(!isalnum(ultimoLido)) {
+            throw ScannerException("Valor char só pode ser digito ou letra",
+                    linha, coluna+1);
+        }
         proximo();
         if(ultimoLido == '\'') {
             proximo();
             return Token::LETRA_VALOR;
         } else {
             throw ScannerException(string("Valor char nao pode ser no formato: "
-                + lexema + ultimoLido), linha, colunaLexema);
+                + lexema + ultimoLido), linha, colunaLexema+1);
             return Token::INVALIDO;
         }
     }
@@ -129,7 +132,7 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
         } else {
             return Token::MAIOR;
         }
-    } else if(ultimoLido == '>') {
+    } else if(ultimoLido == '<') {
         primeiraLeitura();
         if(ultimoLido == '=') {
             proximo();
@@ -143,16 +146,19 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
             proximo();
             return Token::DIFERENTE;
         } else {
-            return Token::INVALIDO;
+            simboloInvalido('!');
         }
     } else {
-        return Token::INVALIDO;
+        simboloInvalido(ultimoLido);
     }
+    return Token::INVALIDO; // unreachable, just to avoid the warning
 }
 
 string palmeidaprog::compiler::Scanner::getLexema() {
     return lexema;
 }
+
+
 
 palmeidaprog::compiler::Scanner::Scanner(const string &arquivo) :
     linha(1), coluna(0), arquivo(arquivo), ultimoLido(' ') {
@@ -233,7 +239,7 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::identifica() {
 void palmeidaprog::compiler::Scanner::comentarios() {
     char temp;
     bool stop = false;
-    while(!stop || ultimoLido != EOF) {
+    while(!stop && ultimoLido != EOF) {
         temp = nextChar();
         if(temp == '\n') {
             novaLinha();
@@ -243,11 +249,20 @@ void palmeidaprog::compiler::Scanner::comentarios() {
         }
         ultimoLido = temp;
     }
+    ultimoLido = ' ';
+    lexema = " ";
 }
 
 void palmeidaprog::compiler::Scanner::novaLinha() {
     ++linha;
     coluna = 0;
+}
+
+void palmeidaprog::compiler::Scanner::simboloInvalido(char simbolo) {
+    stringstream s;
+    s << "Simbolo \'" << simbolo << "\' não está "
+      << "incluso na linguagem.";
+    throw ScannerException(s.str(), linha, coluna+1);
 }
 
 

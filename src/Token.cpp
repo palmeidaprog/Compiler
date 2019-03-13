@@ -98,6 +98,8 @@ palmeidaprog::compiler::Token &token) {
         case Token::PONTO_VIRGULA:
             out << "PONTO_VIRGULA";
             break;
+        case Token::FIM_ARQUIVO:
+            out << "FIM_DE_ARQUIVO";
         default:
             break;
     }

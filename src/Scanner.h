@@ -54,6 +54,7 @@ namespace palmeidaprog { namespace compiler {
         Token identifica();
         void comentarios();
         void novaLinha();
+        void simboloInvalido(char simbolo);
     };
 }}
 
