@@ -80,6 +80,7 @@ palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
         if(ultimoLido == '/') { // comentario simples
             while (ultimoLido != '\n' && ultimoLido != EOF) {
                 ultimoLido = nextChar();
+                novaLinha();
             }
             return scanNext();
         } else if(ultimoLido == '*') {
@@ -248,6 +249,10 @@ void palmeidaprog::compiler::Scanner::comentarios() {
             stop = true;
         }
         ultimoLido = temp;
+    }
+    if(ultimoLido == EOF) {
+        throw ScannerException("Comentário multi-linha não terminado", linha,
+                coluna+1);
     }
     ultimoLido = ' ';
     lexema = " ";
