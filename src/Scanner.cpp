@@ -7,152 +7,9 @@
 
 #include "Scanner.h"
 
-palmeidaprog::compiler::Token palmeidaprog::compiler::Scanner::scanNext() {
-    lexema = "";
-
-    if(ultimoLido == '\n') {
-        ultimoLido = nextChar();
-        novaLinha();
-    }
-
-    while(isspace(ultimoLido)) {
-        ultimoLido = nextChar();
-    }
-
-    //inteiro
-    if(isnumber(ultimoLido)) {
-        primeiraLeitura();
-        leNumeros(); // loop que le digitos
-
-        if(ultimoLido == '.') { // testa se é float
-            proximo();
-            leNumeros();
-        } else { // inteiro
-            return Token::VALOR_INTEIRO;
-        }
-    }
-
-    // float que começam com pontos
-    if(ultimoLido == '.') {
-        primeiraLeitura();
-        leNumeros();
-        return Token::VALOR_FLOAT;
-    }
-
-    // char
-    if(ultimoLido == '\'') {
-        primeiraLeitura();
-        if(!isalnum(ultimoLido)) {
-            throw ScannerException("Valor char só pode ser digito ou letra",
-                    linha, coluna+1);
-        }
-        proximo();
-        if(ultimoLido == '\'') {
-            proximo();
-            return Token::LETRA_VALOR;
-        } else {
-            throw ScannerException(string("Valor char nao pode ser no formato: "
-                + lexema + ultimoLido), linha, colunaLexema+1);
-            return Token::INVALIDO;
-        }
-    }
-
-    // identificador
-    if(isalpha(ultimoLido)) {
-        primeiraLeitura();
-        while(isalpha(ultimoLido) || isnumber(ultimoLido)
-                || ultimoLido == '_') {
-            proximo();
-        }
-        return identifica();
-    }
-
-    // simbolos isolados
-    Token retorno = Token::INVALIDO;
-    if(ultimoLido == '+') {
-        retorno = Token::SOMA;
-    } else if(ultimoLido == '-') {
-        retorno = Token::SUBSTRACAO;
-    } else if(ultimoLido == '*') {
-        retorno = Token::MULTIPLICACAO;
-    } else if(ultimoLido == '/') {
-        primeiraLeitura();
-        if(ultimoLido == '/') { // comentario simples
-            while (ultimoLido != '\n' && ultimoLido != EOF) {
-                ultimoLido = nextChar();
-                novaLinha();
-            }
-            return scanNext();
-        } else if(ultimoLido == '*') {
-            comentarios();
-            return scanNext();
-        } else {
-            return Token::DIVISAO;
-        }
-    } else if(ultimoLido == ')') {
-        retorno = Token::FECHA_PARENTESES;
-    } else if(ultimoLido == '(') {
-        retorno = Token::ABRE_PARENTESES;
-    } else if(ultimoLido == '{') {
-        retorno = Token::ABRE_CHAVE;
-    } else if(ultimoLido == '}') {
-        retorno = Token::FECHA_CHAVE;
-    } else if(ultimoLido == ',') {
-        retorno = Token::VIRGULA;
-    } else if(ultimoLido == ';') {
-        retorno = Token::PONTO_VIRGULA;
-    } else if(ultimoLido == EOF) {
-        return Token::FIM_ARQUIVO;
-    } else if(ultimoLido == '\n') {
-        proximo();
-        ++linha;
-        coluna = 0;
-        return scanNext();
-    }
-
-    // retorno do simbolo isolado
-    if(retorno != Token::INVALIDO) {
-        primeiraLeitura();
-        return retorno;
-    }
-
-    // Atribuicão e operadores relacionais (= == > >= < <= !=)
-    if(ultimoLido == '=') {
-        primeiraLeitura();
-        if(ultimoLido == '=') {
-            proximo();
-            return Token::IGUAL;
-        } else {
-            return Token::ATRIBUICAO;
-        }
-    } else if(ultimoLido == '>') {
-        primeiraLeitura();
-        if(ultimoLido == '=') {
-            proximo();
-            return Token::MAIOR_IGUAL;
-        } else {
-            return Token::MAIOR;
-        }
-    } else if(ultimoLido == '<') {
-        primeiraLeitura();
-        if(ultimoLido == '=') {
-            proximo();
-            return Token::MENOR_IGUAL;
-        } else {
-            return Token::MENOR;
-        }
-    } else if(ultimoLido == '!') {
-        primeiraLeitura();
-        if(ultimoLido == '=') {
-            proximo();
-            return Token::DIFERENTE;
-        } else {
-            simboloInvalido('!');
-        }
-    } else {
-        simboloInvalido(ultimoLido);
-    }
-    return Token::INVALIDO; // unreachable, just to avoid the warning
+std::unique_ptr<palmeidaprog::compiler::ScannerReturn>
+        palmeidaprog::compiler::Scanner::scanNext() {
+    return make_unique<ScannerReturn>(scan(), lexema, colunaLexema, linha);
 }
 
 string palmeidaprog::compiler::Scanner::getLexema() {
@@ -268,6 +125,152 @@ void palmeidaprog::compiler::Scanner::simboloInvalido(char simbolo) {
     s << "Simbolo \'" << simbolo << "\' não está "
       << "incluso na linguagem.";
     throw ScannerException(s.str(), linha, coluna+1);
+}
+
+Token palmeidaprog::compiler::Scanner::scan() {
+    lexema = "";
+
+    while(isspace(ultimoLido)) {
+        if(ultimoLido == '\n') {
+            novaLinha();
+        }
+        ultimoLido = nextChar();
+    }
+
+    //inteiro
+    if(isnumber(ultimoLido)) {
+        primeiraLeitura();
+        leNumeros(); // loop que le digitos
+
+        if(ultimoLido == '.') { // testa se é float
+            proximo();
+            leNumeros();
+        } else { // inteiro
+            return Token::VALOR_INTEIRO;
+        }
+    }
+
+    // float que começam com pontos
+    if(ultimoLido == '.') {
+        primeiraLeitura();
+        leNumeros();
+        return Token::VALOR_FLOAT;
+    }
+
+    // char
+    if(ultimoLido == '\'') {
+        primeiraLeitura();
+        if(!isalnum(ultimoLido)) {
+            throw ScannerException("Valor char só pode ser digito ou letra",
+                                   linha, coluna+1);
+        }
+        proximo();
+        if(ultimoLido == '\'') {
+            proximo();
+            return Token::LETRA_VALOR;
+        } else {
+            throw ScannerException(string("Valor char nao pode ser no formato: "
+                 + lexema + ultimoLido), linha, colunaLexema+1);
+            return Token::INVALIDO;
+        }
+    }
+
+    // identificador
+    if(isalpha(ultimoLido)) {
+        primeiraLeitura();
+        while(isalpha(ultimoLido) || isnumber(ultimoLido)
+              || ultimoLido == '_') {
+            proximo();
+        }
+        return identifica();
+    }
+
+    // simbolos isolados
+    Token retorno = Token::INVALIDO;
+    if(ultimoLido == '+') {
+        retorno = Token::SOMA;
+    } else if(ultimoLido == '-') {
+        retorno = Token::SUBSTRACAO;
+    } else if(ultimoLido == '*') {
+        retorno = Token::MULTIPLICACAO;
+    } else if(ultimoLido == '/') {
+        primeiraLeitura();
+        if(ultimoLido == '/') { // comentario simples
+            while (ultimoLido != '\n' && ultimoLido != EOF) {
+                ultimoLido = nextChar();
+                novaLinha();
+            }
+            return scan();
+        } else if(ultimoLido == '*') {
+            comentarios();
+            return scan();
+        } else {
+            return Token::DIVISAO;
+        }
+    } else if(ultimoLido == ')') {
+        retorno = Token::FECHA_PARENTESES;
+    } else if(ultimoLido == '(') {
+        retorno = Token::ABRE_PARENTESES;
+    } else if(ultimoLido == '{') {
+        retorno = Token::ABRE_CHAVE;
+    } else if(ultimoLido == '}') {
+        retorno = Token::FECHA_CHAVE;
+    } else if(ultimoLido == ',') {
+        retorno = Token::VIRGULA;
+    } else if(ultimoLido == ';') {
+        retorno = Token::PONTO_VIRGULA;
+    } else if(ultimoLido == EOF) {
+        return Token::FIM_ARQUIVO;
+    } else if(ultimoLido == '\n') {
+        proximo();
+        ++linha;
+        coluna = 0;
+        return scan();
+    }
+
+    // retorno do simbolo isolado
+    if(retorno != Token::INVALIDO) {
+        primeiraLeitura();
+        return retorno;
+    }
+
+    // Atribuicão e operadores relacionais (= == > >= < <= !=)
+    if(ultimoLido == '=') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::IGUAL;
+        } else {
+            return Token::ATRIBUICAO;
+        }
+    } else if(ultimoLido == '>') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::MAIOR_IGUAL;
+        } else {
+            return Token::MAIOR;
+        }
+    } else if(ultimoLido == '<') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::MENOR_IGUAL;
+        } else {
+            return Token::MENOR;
+        }
+    } else if(ultimoLido == '!') {
+        primeiraLeitura();
+        if(ultimoLido == '=') {
+            proximo();
+            return Token::DIFERENTE;
+        } else {
+            simboloInvalido('!');
+        }
+    } else {
+        simboloInvalido(ultimoLido);
+    }
+    return Token::INVALIDO; // unreachable, just to avoid the warning
 }
 
 

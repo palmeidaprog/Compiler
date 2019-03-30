@@ -12,6 +12,7 @@
 #include <fstream>
 #include <cctype>
 #include <memory>
+#include "ScannerReturn.h"
 #include "IScanner.h"
 #include "ScannerException.h"
 
@@ -19,6 +20,7 @@ using std::string;
 using std::ifstream;
 using std::unique_ptr;
 using std::make_unique;
+using std::move;
 
 namespace palmeidaprog { namespace compiler {
     class Scanner : public IScanner {
@@ -40,21 +42,21 @@ namespace palmeidaprog { namespace compiler {
             return colunaLexema;
         }
 
-        Token scanNext() override;
+        unique_ptr<ScannerReturn> scanNext() override; // retorno do scanner
         string getLexema() override;
 
     private:
-        void abreArquivo();
-        void fechaArquivo();
-        char nextChar();
-        void proximo();
-        Token simbolosIsolados();
-        void leNumeros();
-        void primeiraLeitura();
-        Token identifica();
-        void comentarios();
-        void novaLinha();
-        void simboloInvalido(char simbolo);
+        Token scan(); // identificação dos tokens
+        void abreArquivo(); // abre arquivo para leitura
+        void fechaArquivo();  // fecha arquivo, quando o scanner termina
+        char nextChar(); // le o proximo char do arquivo
+        void proximo(); // atualiza lookAhead e lexema
+        void leNumeros(); // loop de digitos
+        void primeiraLeitura(); // proximo() + atualiza coluna do lexema
+        Token identifica(); // identifica se palavra reservada ou identif.
+        void comentarios(); // loop dos comentários
+        void novaLinha(); // atualiza linha e coluna depois de \n
+        void simboloInvalido(char simbolo); // simbolo invalido exceção
     };
 }}
 

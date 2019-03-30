@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(Compiler src/main.cpp
         src/Compilador.h
         src/Compilador.cpp
+        src/ScannerReturn.h
+        src/ScannerReturn.cpp
         src/IScanner.h
         src/Scanner.h
         src/Scanner.cpp

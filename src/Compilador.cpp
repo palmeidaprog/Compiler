@@ -26,12 +26,14 @@ void palmeidaprog::compiler::Compilador::compilar() {
 }
 
 void palmeidaprog::compiler::Compilador::debugScanner() {
+    unique_ptr<ScannerReturn> r;
     Token token = Token::FIM_ARQUIVO;
     try {
         do {
-            token = scanner->scanNext();
-            cout << token << "(" << scanner->getLexema() << ")" << endl;
-        } while(token != Token::FIM_ARQUIVO);
+            r = scanner->scanNext();
+            cout << r->getToken() << "(" << r->getLexema() << " c:" <<
+                r->getColuna() << " l:" << r->getLinha() << ")" << endl;
+        } while(r->getToken() != Token::FIM_ARQUIVO);
     } catch (const ScannerException &e) {
         cout << "[Linha:" << e.getLinha() << " Coluna:" << e.getColuna()
              << "] " <<  e.what() << endl;

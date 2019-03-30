@@ -9,15 +9,17 @@
 #define COMPILER_SCANNERABSTRACT_H
 
 #include <string>
-#include "Token.h"
+#include <memory>
+#include "ScannerReturn.h"
 
 using std::string;
+using std::unique_ptr;
 
 namespace palmeidaprog { namespace compiler {
     class IScanner {
     public:
         virtual ~IScanner() { }
-        virtual Token scanNext() = 0;
+        virtual unique_ptr<ScannerReturn> scanNext() = 0;
         virtual string getLexema() = 0;
     };
 }}
