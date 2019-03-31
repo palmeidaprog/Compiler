@@ -7,9 +7,11 @@
 
 
 #include "Compilador.h"
+#include "ParserFactory.h"
 
 palmeidaprog::compiler::Compilador::Compilador(char *arquivo) :
-    scanner(ScannerFactory::getInstance(arquivo)), arquivo(string(arquivo)) {
+    scanner(ScannerFactory::getInstance(arquivo)), arquivo(string(arquivo)),
+    parser(ParserFactory::getInstance(*scanner.get())){
 
 }
 
@@ -22,7 +24,15 @@ palmeidaprog::compiler::Compilador::~Compilador() {
 }
 
 void palmeidaprog::compiler::Compilador::compilar() {
-    debugScanner();
+    try {
+
+    } catch(const ScannerException &sExc) {
+        cerr << "[Linha:" << sExc.getLinha() << " Coluna:" << sExc.getColuna()
+             << "] " <<  sExc.what() << endl;
+    } catch(const ParserException &pExc) {
+        cerr << "[Linha:" << pExc.getErro().getLinha() << " Coluna:" << sExc.getColuna()
+             << "] " <<  sExc.what() << endl;
+    }
 }
 
 void palmeidaprog::compiler::Compilador::debugScanner() {

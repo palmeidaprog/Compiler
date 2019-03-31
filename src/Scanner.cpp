@@ -161,7 +161,7 @@ Token palmeidaprog::compiler::Scanner::scan() {
     if(ultimoLido == '\'') {
         primeiraLeitura();
         if(!isalnum(ultimoLido)) {
-            throw ScannerException("Valor char só pode ser digito ou letra",
+            throw ScannerException("Valor char malformado. Só pode ser digito ou letra",
                                    linha, coluna+1);
         }
         proximo();
@@ -169,7 +169,7 @@ Token palmeidaprog::compiler::Scanner::scan() {
             proximo();
             return Token::LETRA_VALOR;
         } else {
-            throw ScannerException(string("Valor char nao pode ser no formato: "
+            throw ScannerException(string("Valor char malformado: "
                  + lexema + ultimoLido), linha, colunaLexema+1);
             return Token::INVALIDO;
         }

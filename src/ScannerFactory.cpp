@@ -10,6 +10,7 @@ palmeidaprog::compiler::ScannerFactory::getInstance(char *arquivo) {
 }
 
 unique_ptr<palmeidaprog::compiler::IScanner>
-palmeidaprog::compiler::ScannerFactory::getInstance(const std::string &arquivo) {
+palmeidaprog::compiler::ScannerFactory::getInstance(const std::string
+        &arquivo) {
     return make_unique<Scanner>(arquivo);
 }

@@ -8,11 +8,11 @@
 #include <memory>
 #include "IScanner.h"
 #include "IParser.h"
+#include "Parser.h"
 
 using std::unique_ptr;
 
 namespace palmeidaprog { namespace compiler {
-
     class ParserFactory {
     public:
         static unique_ptr<IParser> getInstance(IScanner &scanner);

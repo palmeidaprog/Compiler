@@ -15,17 +15,22 @@
 #include "ScannerException.h"
 #include "IScanner.h"
 #include "ScannerFactory.h"
+#include "IParser.h"
+#include "ParserFactory.h"
+#include "ParserException.h"
 
 using std::make_unique;
 using palmeidaprog::compiler::IScanner;
 using std::string;
 using std::unique_ptr;
 using std::cout;
+using std::cerr;
 using std::endl;
 
 namespace palmeidaprog { namespace compiler {
     class Compilador {
         unique_ptr<IScanner> scanner;
+        unique_ptr<IParser> parser;
         string arquivo;
 
     public:
