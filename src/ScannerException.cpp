@@ -8,8 +8,9 @@
 #include "ScannerException.h"
 
 palmeidaprog::compiler::ScannerException::ScannerException(
-        const string &mensagem, unsigned linha, unsigned coluna) noexcept :
-        runtime_error(mensagem), linha(linha), coluna(coluna) {
+        const string &mensagem, unsigned linha, unsigned coluna,
+        const string &lexema) noexcept : runtime_error(mensagem),
+        linha(linha), coluna(coluna), lexema(lexema) {
 
 }
 

@@ -19,9 +19,10 @@ namespace palmeidaprog { namespace compiler {
     public:
         ScannerReturn(Token token, const string &lexema, int coluna,
                 int linha);
+        ScannerReturn(const ScannerReturn &toCopy);
         virtual ~ScannerReturn();
 
-        Token getToken() const {
+        Token getToken() const noexcept {
             return token;
         }
 

@@ -21,11 +21,12 @@ using std::stringstream;
 namespace palmeidaprog { namespace compiler {
     class ScannerException : public runtime_error {
         const unsigned linha, coluna;
+        const string lexema;
 
     public:
         explicit ScannerException(const string &s) noexcept;
         ScannerException(const string &mensagem, unsigned linha,
-                unsigned coluna) noexcept;
+                unsigned coluna, const string &lexema) noexcept;
         virtual ~ScannerException();
 
         unsigned getLinha() const noexcept {
@@ -34,6 +35,10 @@ namespace palmeidaprog { namespace compiler {
 
         unsigned getColuna() const noexcept {
             return coluna;
+        }
+
+        const string &getLexema() const noexcept {
+            return lexema;
         }
 
         string msg() const;

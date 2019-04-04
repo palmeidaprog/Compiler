@@ -109,7 +109,7 @@ void palmeidaprog::compiler::Scanner::comentarios() {
     }
     if(ultimoLido == EOF) {
         throw ScannerException("Comentário multi-linha não terminado", linha,
-                coluna+1);
+                               coluna + 1, "");
     }
     ultimoLido = ' ';
     lexema = " ";
@@ -124,7 +124,7 @@ void palmeidaprog::compiler::Scanner::simboloInvalido(char simbolo) {
     stringstream s;
     s << "Simbolo \'" << simbolo << "\' não está "
       << "incluso na linguagem.";
-    throw ScannerException(s.str(), linha, coluna+1);
+    throw ScannerException(s.str(), linha, colunaLexema, string(1, simbolo));
 }
 
 Token palmeidaprog::compiler::Scanner::scan() {
@@ -154,6 +154,11 @@ Token palmeidaprog::compiler::Scanner::scan() {
     if(ultimoLido == '.') {
         primeiraLeitura();
         leNumeros();
+        if(lexema == ".") {
+            throw ScannerException(string("Valor float malformado. \".\" ")
+                .append("sozinho é um simbolo invalido"),linha, colunaLexema,
+                lexema);
+        }
         return Token::VALOR_FLOAT;
     }
 
@@ -161,17 +166,22 @@ Token palmeidaprog::compiler::Scanner::scan() {
     if(ultimoLido == '\'') {
         primeiraLeitura();
         if(!isalnum(ultimoLido)) {
-            throw ScannerException("Valor char malformado. Só pode ser digito ou letra",
-                                   linha, coluna+1);
+            throw ScannerException(string("Valor char malformado. ")
+                 .append("Só pode ser digito ou letra"),
+                linha, colunaLexema + 1, string(lexema + ultimoLido));
         }
         proximo();
         if(ultimoLido == '\'') {
             proximo();
             return Token::LETRA_VALOR;
         } else {
-            throw ScannerException(string("Valor char malformado: "
-                 + lexema + ultimoLido), linha, colunaLexema+1);
-            return Token::INVALIDO;
+            string v(lexema + ultimoLido);
+            unsigned tam = v.length() - 1;
+            if(v[tam] == '\n') {
+                v.erase(v.begin()+tam);
+            }
+            throw ScannerException(string("Valor char malformado. "), linha,
+                    colunaLexema + 1, v);
         }
     }
 
@@ -270,7 +280,7 @@ Token palmeidaprog::compiler::Scanner::scan() {
     } else {
         simboloInvalido(ultimoLido);
     }
-    return Token::INVALIDO; // unreachable, just to avoid the warning
+    return Token::INVALIDO; // inalcancavel, apenas para evitar warning
 }
 
 

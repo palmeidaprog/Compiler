@@ -10,16 +10,17 @@
 #include "ScannerReturn.h"
 
 using std::unique_ptr;
+using std::shared_ptr;
 using std::move;
 using std::runtime_error;
 
 namespace palmeidaprog { namespace compiler {
     class ParserException : public runtime_error {
-        const unique_ptr<ScannerReturn> erro;
+        const shared_ptr<ScannerReturn> erro;
 
     public:
-        explicit ParserException(const string &mensagem,
-                unique_ptr<ScannerReturn> erro) noexcept;
+        ParserException(const string &mensagem,
+                        shared_ptr<ScannerReturn> erro) noexcept;
         virtual ~ParserException();
 
         const ScannerReturn &getErro() const noexcept;

@@ -13,8 +13,12 @@
 #include "IParser.h"
 #include "IScanner.h"
 #include "ScannerReturn.h"
+#include "ScannerException.h"
+#include "ParserException.h"
 
 using std::unique_ptr;
+using std::move;
+using std::string;
 
 namespace palmeidaprog { namespace compiler {
     class Parser : public IParser {
@@ -34,12 +38,21 @@ namespace palmeidaprog { namespace compiler {
         void comando();
         void comandoBasico();
         void declaracaoVar();
+        void idVar();
         void iteracao();
         void exprRelacional();
         void atribuicao();
         void exprAritmetica();
         void termo();
         void fator();
+        void exc(const string &msg);
+
+        bool isTipo() const {
+            return lookAhead->getToken() == Token::INTEIRO
+                   || lookAhead->getToken() == Token::FLOAT
+                   || lookAhead->getToken() == Token::LETRA
+                   || lookAhead->getToken() == Token::INTEIRO;
+        }
     };
 }}
 

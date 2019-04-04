@@ -14,3 +14,9 @@ palmeidaprog::compiler::ScannerReturn::ScannerReturn(Token token,
 palmeidaprog::compiler::ScannerReturn::~ScannerReturn() {
 
 }
+
+palmeidaprog::compiler::ScannerReturn::ScannerReturn(const
+        palmeidaprog::compiler::ScannerReturn &toCopy) : token(toCopy.token),
+        lexema(toCopy.lexema), coluna(toCopy.coluna), linha(toCopy.linha) {
+
+}

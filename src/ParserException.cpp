@@ -9,13 +9,13 @@ const char *palmeidaprog::compiler::ParserException::what() const noexcept {
 }
 
 palmeidaprog::compiler::ParserException::ParserException(const string &mensagem,
-        unique_ptr<palmeidaprog::compiler::ScannerReturn> erro) noexcept :
-        runtime_error(mensagem), erro(move(erro)) {
+        shared_ptr<ScannerReturn> erro) noexcept :
+        runtime_error(mensagem), erro(erro) {
 }
 
 palmeidaprog::compiler::ParserException::~ParserException() { }
 
 const palmeidaprog::compiler::ScannerReturn
-        &palmeidaprog::compiler::ParserException::getErro() const noexcept {
+&palmeidaprog::compiler::ParserException::getErro() const noexcept {
     return *erro.get();
 }

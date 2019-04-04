@@ -16,7 +16,8 @@ palmeidaprog::compiler::Compilador::Compilador(char *arquivo) :
 }
 
 palmeidaprog::compiler::Compilador::Compilador(const string &arquivo) :
-    scanner(ScannerFactory::getInstance(arquivo)), arquivo(arquivo){
+    scanner(ScannerFactory::getInstance(arquivo)), arquivo(arquivo),
+    parser(ParserFactory::getInstance(*scanner.get())) {
 }
 
 palmeidaprog::compiler::Compilador::~Compilador() {
@@ -24,14 +25,20 @@ palmeidaprog::compiler::Compilador::~Compilador() {
 }
 
 void palmeidaprog::compiler::Compilador::compilar() {
+    unique_ptr<ScannerReturn> r;
     try {
-
+        do {
+            r = scanner->scanNext();
+        } while(r->getToken() != Token::FIM_ARQUIVO);
+        //parser->parse();
     } catch(const ScannerException &sExc) {
-        cerr << "[Linha:" << sExc.getLinha() << " Coluna:" << sExc.getColuna()
-             << "] " <<  sExc.what() << endl;
+        cout << "ERRO na linha " << sExc.getLinha() << ", coluna " <<
+             sExc.getColuna() << ", Ultimo token lido: \"" << sExc.getLexema()
+             << "\" Mensagem: " << sExc.what() << endl;
     } catch(const ParserException &pExc) {
-        cerr << "[Linha:" << pExc.getErro().getLinha() << " Coluna:" << sExc.getColuna()
-             << "] " <<  sExc.what() << endl;
+        cerr << "ERRO na linha " << pExc.getErro().getLinha() << ", coluna " <<
+            pExc.getErro().getColuna() << ", \"" << pExc.getErro().getLexema()
+            << "\" " << pExc.what() << endl;
     }
 }
 

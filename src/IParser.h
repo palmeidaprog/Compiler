@@ -16,6 +16,7 @@ using std::unique_ptr;
 
 namespace palmeidaprog { namespace compiler {
     class IParser {
+    public:
         // virtual Tabela &getTabela() = 0
         //virtual ArvoreGramatica<Scanner>
         virtual void parse() = 0;
