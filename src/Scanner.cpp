@@ -60,7 +60,7 @@ void palmeidaprog::compiler::Scanner::proximo() {
 // 40 a 45  ( ) * + , -
 
 void palmeidaprog::compiler::Scanner::leNumeros() {
-    while(isnumber(ultimoLido)) {
+    while(isdigit(ultimoLido)) {
         proximo();
     }
 }
@@ -138,7 +138,7 @@ Token palmeidaprog::compiler::Scanner::scan() {
     }
 
     //inteiro
-    if(isnumber(ultimoLido)) {
+    if(isdigit(ultimoLido)) {
         primeiraLeitura();
         leNumeros(); // loop que le digitos
 
@@ -188,7 +188,7 @@ Token palmeidaprog::compiler::Scanner::scan() {
     // identificador
     if(isalpha(ultimoLido)) {
         primeiraLeitura();
-        while(isalpha(ultimoLido) || isnumber(ultimoLido)
+        while(isalpha(ultimoLido) || isdigit(ultimoLido)
               || ultimoLido == '_') {
             proximo();
         }
