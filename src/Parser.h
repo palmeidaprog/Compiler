@@ -41,11 +41,28 @@ namespace palmeidaprog { namespace compiler {
         void idVar();
         void iteracao();
         void exprRelacional();
+        void condicionalWhile();
         void atribuicao();
         void exprAritmetica();
         void termo();
         void fator();
+        void condicionalIf();
         void exc(const string &msg);
+
+        bool isValor() {
+            return lookAhead->getToken() == Token::VALOR_FLOAT
+                    || lookAhead->getToken() == Token::VALOR_INTEIRO
+                    || lookAhead->getToken() == Token::LETRA_VALOR;
+        }
+
+        bool operadorRelacional() const {
+            return lookAhead->getToken() == Token::MAIOR_IGUAL
+                || lookAhead->getToken() == Token::MAIOR
+                || lookAhead->getToken() == Token::MENOR
+                || lookAhead->getToken() == Token::MENOR_IGUAL
+                || lookAhead->getToken() == Token::IGUAL
+                || lookAhead->getToken() == Token::DIFERENTE;
+        }
 
         bool isTipo() const {
             return lookAhead->getToken() == Token::INTEIRO

@@ -27,10 +27,7 @@ palmeidaprog::compiler::Compilador::~Compilador() {
 void palmeidaprog::compiler::Compilador::compilar() {
     unique_ptr<ScannerReturn> r;
     try {
-        do {
-            r = scanner->scanNext();
-        } while(r->getToken() != Token::FIM_ARQUIVO);
-        //parser->parse();
+        parser->parse();
     } catch(const ScannerException &sExc) {
         cout << "ERRO na linha " << sExc.getLinha() << ", coluna " <<
              sExc.getColuna() << ", Ultimo token lido: \"" << sExc.getLexema()
