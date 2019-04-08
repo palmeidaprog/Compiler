@@ -64,6 +64,12 @@ void palmeidaprog::compiler::Parser::bloco() {
     }
 
     while(lookAhead->getToken() != Token::FECHA_CHAVE) {
+        if(isTipo()) {
+            exc(string("Variáveis só podem ser declaradas no começo do ")
+                .append("escopo. Impossível declarar após utilização de ")
+                .append("comandos"));
+        }
+
         if(lookAhead->getToken() == Token::FIM_ARQUIVO) {
             exc("Fim de arquivo encontrado com parenteses malformado.");
         }
