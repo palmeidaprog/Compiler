@@ -33,6 +33,10 @@ palmeidaprog::compiler::Scanner::~Scanner() {
 
 void palmeidaprog::compiler::Scanner::abreArquivo() {
     codigoFonte = make_unique<ifstream>(arquivo);
+
+    if(!codigoFonte->is_open()) {
+        throw runtime_error("Arquivo não existe");
+    }
 }
 
 char palmeidaprog::compiler::Scanner::nextChar() {

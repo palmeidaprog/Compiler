@@ -8,7 +8,7 @@
 #include "Parser.h"
 
 palmeidaprog::compiler::Parser::Parser(palmeidaprog::compiler::IScanner
-    &scanner) : scanner(scanner) {
+    &scanner) : scanner(scanner), finalizado(false) {
 }
 
 palmeidaprog::compiler::Parser::~Parser() {
@@ -64,7 +64,6 @@ void palmeidaprog::compiler::Parser::bloco() {
         }
         comando();
     }
-
     proximoToken();
 }
 
@@ -192,6 +191,7 @@ void palmeidaprog::compiler::Parser::fator() {
 
 void palmeidaprog::compiler::Parser::parse() {
     programa();
+    finalizado = true;
     if(lookAhead->getToken() != Token::FIM_ARQUIVO) {
         exc("Código encontrado fora da função main");
     }

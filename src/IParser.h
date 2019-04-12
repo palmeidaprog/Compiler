@@ -20,6 +20,7 @@ namespace palmeidaprog { namespace compiler {
         // virtual Tabela &getTabela() = 0
         //virtual ArvoreGramatica<Scanner>
         virtual void parse() = 0;
+        virtual bool isFinalizado() const = 0;
     };
 
 }}

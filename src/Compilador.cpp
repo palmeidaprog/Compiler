@@ -7,7 +7,7 @@
 
 
 #include "Compilador.h"
-#include "ParserFactory.h"
+
 
 palmeidaprog::compiler::Compilador::Compilador(char *arquivo) :
     scanner(ScannerFactory::getInstance(arquivo)), arquivo(string(arquivo)),
@@ -26,6 +26,7 @@ palmeidaprog::compiler::Compilador::~Compilador() {
 
 void palmeidaprog::compiler::Compilador::compilar() {
     unique_ptr<ScannerReturn> r;
+    string s = "Fim de arquivo encontrado antes da finalização do programa. ";
     try {
         parser->parse();
     } catch(const ScannerException &sExc) {
@@ -33,9 +34,16 @@ void palmeidaprog::compiler::Compilador::compilar() {
              sExc.getColuna() << ", Ultimo token lido: \"" << sExc.getLexema()
              << "\" Mensagem: " << sExc.what() << endl;
     } catch(const ParserException &pExc) {
-        cerr << "ERRO na linha " << pExc.getErro().getLinha() << ", coluna " <<
+        s = ""; // debug
+        if(parser->isFinalizado()) {
+            s = "";
+        }
+        cout << "ERRO na linha " << pExc.getErro().getLinha() << ", coluna " <<
             pExc.getErro().getColuna() << ", \"" << pExc.getErro().getLexema()
-            << "\" " << pExc.what() << endl;
+            << "\" " << s << pExc.what()
+            << endl;
+    } catch(const std::runtime_error &runt) {
+        cout << runt.what() << endl;
     }
 }
 
@@ -49,7 +57,7 @@ void palmeidaprog::compiler::Compilador::debugScanner() {
                 r->getColuna() << " l:" << r->getLinha() << ")" << endl;
         } while(r->getToken() != Token::FIM_ARQUIVO);
     } catch (const ScannerException &e) {
-        cout << "[Linha:" << e.getLinha() << " Coluna:" << e.getColuna()
+        cout << "[Linha:" << e.getLinha() << " Coluna:" <<  e.getColuna()
              << "] " <<  e.what() << endl;
     }
 }

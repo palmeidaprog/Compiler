@@ -27,10 +27,14 @@ namespace palmeidaprog { namespace compiler {
     class Parser : public IParser {
         IScanner &scanner;
         unique_ptr<ScannerReturn> lookAhead;
+        bool finalizado;
 
     public:
         virtual ~Parser();
         Parser(IScanner &scanner);
+        bool isFinalizado() const override {
+            return finalizado;
+        }
 
         void parse() override;
 

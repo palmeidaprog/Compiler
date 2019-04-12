@@ -8,6 +8,7 @@
 #ifndef COMPILER_COMPILER_H
 #define COMPILER_COMPILER_H
 
+#include <stdexcept>
 #include <iostream>
 #include <memory>
 #include "Token.h"
@@ -26,6 +27,7 @@ using std::unique_ptr;
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::runtime_error;
 
 namespace palmeidaprog { namespace compiler {
     class Compilador {

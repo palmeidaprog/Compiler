@@ -15,8 +15,13 @@ using palmeidaprog::compiler::Compilador;
 
 int main(int argc, char *argv[]) {
     if(argc == 2) {
-        Compilador compilador(argv[1]);
-        compilador.compilar();
+        try {
+            Compilador compilador(argv[1]);
+            compilador.compilar();
+        } catch(const std::runtime_error &r) {
+            cout << r.what() << endl;
+        }
+
     } else if(argc == 1) {
         cerr << "Você precisa especificar o arquivo fonte a ser compilado"
             << endl
