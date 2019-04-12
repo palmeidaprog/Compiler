@@ -9,6 +9,7 @@
 #ifndef COMPILER_PARSER_H
 #define COMPILER_PARSER_H
 
+#include <iostream>
 #include <memory>
 #include "IParser.h"
 #include "IScanner.h"
@@ -19,6 +20,8 @@
 using std::unique_ptr;
 using std::move;
 using std::string;
+using std::cout;
+using std::endl;
 
 namespace palmeidaprog { namespace compiler {
     class Parser : public IParser {

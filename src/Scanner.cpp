@@ -145,6 +145,7 @@ Token palmeidaprog::compiler::Scanner::scan() {
         if(ultimoLido == '.') { // testa se é float
             proximo();
             leNumeros();
+            return Token::VALOR_FLOAT;
         } else { // inteiro
             return Token::VALOR_INTEIRO;
         }

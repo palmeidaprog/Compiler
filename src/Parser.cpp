@@ -42,17 +42,6 @@ void palmeidaprog::compiler::Parser::programa() {
 }
 
 void palmeidaprog::compiler::Parser::bloco() {
-    // sem chaves
-    /*if(lookAhead->getToken() != Token::ABRE_CHAVE) {
-        if(isTipo()) {
-            declaracaoVar();
-        } else {
-            comando();
-        }
-        return;
-    }*/
-
-    //com chaves
     if(lookAhead->getToken() == Token::ABRE_CHAVE) {
         proximoToken(); // lida chaves
     } else {
@@ -71,17 +60,23 @@ void palmeidaprog::compiler::Parser::bloco() {
         }
 
         if(lookAhead->getToken() == Token::FIM_ARQUIVO) {
-            exc("Fim de arquivo encontrado com parenteses malformado.");
+            exc("Fim de arquivo encontrado com chaves não fechada.");
         }
         comando();
     }
+
     proximoToken();
 }
 
 void palmeidaprog::compiler::Parser::comando() {
-    iteracao(); // se nao for iteracao ele sai sem dar erro
-    condicionalIf();
-    comandoBasico();
+    if(lookAhead->getToken() == Token::DO ||
+        lookAhead->getToken() == Token::WHILE) {
+        iteracao();
+    } else if(lookAhead->getToken() == Token::IF) {
+        condicionalIf();
+    } else {
+        comandoBasico();
+    }
 }
 
 void palmeidaprog::compiler::Parser::comandoBasico() {
@@ -106,7 +101,7 @@ void palmeidaprog::compiler::Parser::condicionalWhile() {
         if (lookAhead->getToken() == Token::FECHA_PARENTESES) {
             proximoToken();
         } else {
-            exc("Parenteses malformado na condicional do while");
+            exc("Parenteses não fechado na condicional do while");
         }
     } else {
         exc("Esperado parenteses com condicional após while");
@@ -236,20 +231,19 @@ void palmeidaprog::compiler::Parser::condicionalIf() {
             exprRelacional();
             if(lookAhead->getToken() == Token::FECHA_PARENTESES) {
                 proximoToken();
-            } else {
-                exc(string("Parenteses malformado, fecha parenteses esperado")
-                           .append(" após condicional do if"));
                 comando();
                 if(lookAhead->getToken() == Token::ELSE) {
                     proximoToken();
                     comando();
                 }
+            } else {
+                exc(string("Parenteses malformado, fecha parenteses esperado")
+                            .append(" após condicional do if"));
             }
         } else {
             exc("() Abre parenteses com condicional esperada após um if");
         }
     }
-
 }
 
 
