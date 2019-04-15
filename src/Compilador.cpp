@@ -45,6 +45,7 @@ void palmeidaprog::compiler::Compilador::compilar() {
     } catch(const std::runtime_error &runt) {
         cout << runt.what() << endl;
     }
+    debugTabela();
 }
 
 void palmeidaprog::compiler::Compilador::debugScanner() {
@@ -64,4 +65,8 @@ void palmeidaprog::compiler::Compilador::debugScanner() {
 
 void palmeidaprog::compiler::Compilador::tokenToStr(
         palmeidaprog::compiler::Token token) {
+}
+
+void palmeidaprog::compiler::Compilador::debugTabela() {
+    parser->debugTabela();
 }

@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 #include "IParser.h"
 #include "IScanner.h"
 #include "ScannerReturn.h"
@@ -18,16 +19,21 @@
 #include "ParserException.h"
 
 using std::unique_ptr;
+using std::make_unique;
 using std::move;
 using std::string;
 using std::cout;
 using std::endl;
+using std::unordered_map;
 
 namespace palmeidaprog { namespace compiler {
     class Parser : public IParser {
         IScanner &scanner;
         unique_ptr<ScannerReturn> lookAhead;
+        unordered_map<string, unique_ptr<Simbolo> > tabela;
         bool finalizado;
+        Token tipoVar;
+
 
     public:
         virtual ~Parser();
@@ -36,7 +42,10 @@ namespace palmeidaprog { namespace compiler {
             return finalizado;
         }
 
+        const Simbolo *getSimbolo(string identificador) const override;
         void parse() override;
+
+        void debugTabela() const noexcept override;
 
     private:
         void proximoToken();

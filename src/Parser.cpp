@@ -88,6 +88,7 @@ void palmeidaprog::compiler::Parser::comandoBasico() {
 
 // declaracao de variaveis;
 void palmeidaprog::compiler::Parser::declaracaoVar() {
+    tipoVar = lookAhead->getToken();
     proximoToken(); // passa o tipo
     idVar();
 }
@@ -208,6 +209,9 @@ void palmeidaprog::compiler::Parser::exc(const string &msg) {
 // pega os identifcadores das variaveis
 void palmeidaprog::compiler::Parser::idVar() {
     if(lookAhead->getToken() == Token::IDENTIFICADOR) {
+
+        tabela.emplace(lookAhead->getLexema(),
+                make_unique<Simbolo>(lookAhead->getLexema(), tipoVar));
         proximoToken();
         if(lookAhead->getToken() == Token::PONTO_VIRGULA) {
             proximoToken();
@@ -245,6 +249,23 @@ void palmeidaprog::compiler::Parser::condicionalIf() {
         }
     }
 }
+
+const palmeidaprog::compiler::Simbolo *
+palmeidaprog::compiler::Parser::getSimbolo(string identificador) const {
+    auto it = tabela.find(identificador);
+    return it == tabela.end() ? nullptr : it->second.get();
+}
+
+void palmeidaprog::compiler::Parser::debugTabela() const noexcept {
+    using iter = unordered_map<string, unique_ptr<Simbolo> >::const_iterator;
+    for(iter it = tabela.begin(); it != tabela.cend(); it++) {
+        cout << it->first << " : " << it->second->getTipo() << endl;
+    }
+}
+
+
+
+
 
 
 
