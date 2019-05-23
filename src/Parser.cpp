@@ -8,7 +8,8 @@
 #include "Parser.h"
 
 palmeidaprog::compiler::Parser::Parser(palmeidaprog::compiler::IScanner
-    &scanner) : scanner(scanner), finalizado(false) {
+    &scanner) : scanner(scanner), finalizado(false),
+    tabela(make_unique<TabelaSimbolos>()), escopo(0) {
 }
 
 palmeidaprog::compiler::Parser::~Parser() {
@@ -44,6 +45,7 @@ void palmeidaprog::compiler::Parser::programa() {
 void palmeidaprog::compiler::Parser::bloco() {
     if(lookAhead->getToken() == Token::ABRE_CHAVE) {
         proximoToken(); // lida chaves
+        ++escopo;
     } else {
         exc("Bloco de código necessita de abre chaves");
     }
@@ -65,6 +67,7 @@ void palmeidaprog::compiler::Parser::bloco() {
         comando();
     }
     proximoToken();
+    tabela->destroiEscopo(escopo--); // destroi variaveis do escopo
 }
 
 void palmeidaprog::compiler::Parser::comando() {
@@ -250,17 +253,8 @@ void palmeidaprog::compiler::Parser::condicionalIf() {
     }
 }
 
-const palmeidaprog::compiler::Simbolo *
-palmeidaprog::compiler::Parser::getSimbolo(string identificador) const {
-    auto it = tabela.find(identificador);
-    return it == tabela.end() ? nullptr : it->second.get();
-}
-
 void palmeidaprog::compiler::Parser::debugTabela() const noexcept {
-    using iter = unordered_map<string, unique_ptr<Simbolo> >::const_iterator;
-    for(iter it = tabela.begin(); it != tabela.cend(); it++) {
-        cout << it->first << " : " << it->second->getTipo() << endl;
-    }
+    tabela->debug();
 }
 
 

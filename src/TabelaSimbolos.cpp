@@ -17,7 +17,7 @@ palmeidaprog::compiler::TabelaSimbolos::~TabelaSimbolos() {
 
 const palmeidaprog::compiler::Simbolo
 *palmeidaprog::compiler::TabelaSimbolos::procura(const string &identificador,
-            int escopo)const noexcept {
+            int escopo) const noexcept {
     while(escopo >= 0) {
         auto it = tabela[escopo]->find(identificador);
         if(it != tabela[escopo].end()) {
@@ -43,3 +43,13 @@ void palmeidaprog::compiler::TabelaSimbolos::destroiEscopo(int escopo) {
         tabela.pop_back();
     }
 }
+
+void palmeidaprog::compiler::TabelaSimbolos::debug() const noexcept {
+    for(int i = 0; i < tabela.size(); i++) {
+        for(auto it = tabela[i].begin(); it != tabela[i].cend(); it++) {
+            cout << *(it->second.get()) << endl;
+        }
+    }
+}
+
+

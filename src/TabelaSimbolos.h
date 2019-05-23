@@ -8,6 +8,7 @@
 #ifndef COMPILER_TABELASIMBOLOS_H
 #define COMPILER_TABELASIMBOLOS_H
 
+#include <iostream>
 #include <unordered_map>
 #include <memory>
 #include <vector>
@@ -18,6 +19,8 @@ using std::vector;
 using std::unordered_map;
 using std::string;
 using std::unique_ptr;
+using std::cout;
+using std::endl;
 
 namespace palmeidaprog { namespace compiler {
     class TabelaSimbolos {
@@ -32,6 +35,7 @@ namespace palmeidaprog { namespace compiler {
                 const noexcept;
         void adiciona(Simbolo *identificador);
         void destroiEscopo(int escopo);
+        void debug() const noexcept;
     };
 }}
 

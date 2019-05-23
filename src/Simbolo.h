@@ -6,9 +6,11 @@
 #define COMPILER_SIMBOLO_H
 
 #include <string>
+#include <ostream>
 #include "Token.h"
 
 using std::string;
+using std::ostream;
 
 namespace palmeidaprog { namespace compiler {
     class Simbolo {
@@ -30,8 +32,17 @@ namespace palmeidaprog { namespace compiler {
         int getEscopo() const noexcept {
             return escopo;
         }
+
+    private:
+        friend ostream &operator<<(ostream &out. const Simbolo &simbolo);
     };
 }}
 
 
 #endif //COMPILER_SIMBOLO_H
+
+ostream &operator<<(ostream &out. const Simbolo &simbolo) {
+    out << simbolo.escopo << "\t" << simbolo.identificador << "\t"
+        << simbolo.tipo << "\n";
+    return out;
+}

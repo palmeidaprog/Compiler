@@ -17,6 +17,7 @@
 #include "ScannerReturn.h"
 #include "ScannerException.h"
 #include "ParserException.h"
+#include "TabelaSimbolos.h"
 
 using std::unique_ptr;
 using std::make_unique;
@@ -30,9 +31,11 @@ namespace palmeidaprog { namespace compiler {
     class Parser : public IParser {
         IScanner &scanner;
         unique_ptr<ScannerReturn> lookAhead;
-        unordered_map<string, unique_ptr<Simbolo> > tabela;
+        //unordered_map<string, unique_ptr<Simbolo> > tabela;
         bool finalizado;
         Token tipoVar;
+        unique_ptr<TabelaSimbolos> tabela;
+        unsigned escopo;
 
     public:
         virtual ~Parser();
@@ -41,7 +44,6 @@ namespace palmeidaprog { namespace compiler {
             return finalizado;
         }
 
-        const Simbolo *getSimbolo(string identificador) const override;
         void parse() override;
 
         void debugTabela() const noexcept override;
