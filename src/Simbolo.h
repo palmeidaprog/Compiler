@@ -14,14 +14,22 @@ namespace palmeidaprog { namespace compiler {
     class Simbolo {
         const string identificador;
         const Token tipo;
+        const int escopo;
 
     public:
-        Simbolo(const string &identificador, Token tipo);
+        Simbolo(const string &identificador, Token tipo, int escopo) noexcept;
         virtual ~Simbolo();
 
-        const string &getIdentificador() const;
-        const Token getTipo() const;
+        const string &getIdentificador() const noexcept {
+            return identificador;
+        }
+        const Token getTipo() const noexcept {
+            return tipo;
+        }
 
+        int getEscopo() const noexcept {
+            return escopo;
+        }
     };
 }}
 

@@ -34,7 +34,6 @@ namespace palmeidaprog { namespace compiler {
         bool finalizado;
         Token tipoVar;
 
-
     public:
         virtual ~Parser();
         Parser(IScanner &scanner);
