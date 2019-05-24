@@ -34,15 +34,23 @@ namespace palmeidaprog { namespace compiler {
         }
 
     private:
-        friend ostream &operator<<(ostream &out. const Simbolo &simbolo);
+        friend ostream& operator<<(ostream &out, const Simbolo &simbolo);
     };
+
+
+    ostream& operator<<(ostream &out, const Simbolo &simbolo) {
+        out << simbolo.escopo << "\t" << simbolo.identificador << "\t";
+        //out << simbolo.tipo; TODO: fix the overloading of operator in Token
+        return out;
+    }
 }}
+
 
 
 #endif //COMPILER_SIMBOLO_H
 
-ostream &operator<<(ostream &out. const Simbolo &simbolo) {
-    out << simbolo.escopo << "\t" << simbolo.identificador << "\t"
-        << simbolo.tipo << "\n";
-    return out;
-}
+//ostream &operator<<(ostream &out, const Simbolo &simbolo) {
+//    out << simbolo.escopo << "\t" << simbolo.identificador << "\t"
+//        << simbolo.tipo << "\n";
+//    return out;
+//}

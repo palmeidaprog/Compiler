@@ -212,9 +212,12 @@ void palmeidaprog::compiler::Parser::exc(const string &msg) {
 // pega os identifcadores das variaveis
 void palmeidaprog::compiler::Parser::idVar() {
     if(lookAhead->getToken() == Token::IDENTIFICADOR) {
-
+        // TODO: verify if tipoVar is really correct or to switch to getTipo()
+        tabela->adiciona(new Simbolo(lookAhead->getLexema(), tipoVar,
+                escopo));
+        /* TODO: remove this
         tabela.emplace(lookAhead->getLexema(),
-                make_unique<Simbolo>(lookAhead->getLexema(), tipoVar));
+                make_unique<Simbolo>(lookAhead->getLexema(), tipoVar));*/
         proximoToken();
         if(lookAhead->getToken() == Token::PONTO_VIRGULA) {
             proximoToken();

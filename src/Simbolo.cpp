@@ -11,3 +11,4 @@ palmeidaprog::compiler::Simbolo::Simbolo(const string &identificador,
 
 palmeidaprog::compiler::Simbolo::~Simbolo() {
 }
+
