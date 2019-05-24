@@ -19,4 +19,8 @@ add_executable(Compiler src/main.cpp
         src/ScannerException.h
         src/ScannerException.cpp
         src/Token.h
-        src/Token.cpp src/Parser.cpp src/Parser.h src/ParserException.cpp src/ParserException.h src/Simbolo.cpp src/Simbolo.h src/TabelaSimbolos.cpp src/TabelaSimbolos.h)
+        src/Token.cpp src/Parser.cpp src/Parser.h
+        src/ParserException.cpp src/ParserException.h
+        src/Simbolo.cpp src/Simbolo.h
+        src/TabelaSimbolos.cpp src/TabelaSimbolos.h
+        src/SemanticReturn.cpp src/SemanticReturn.h)

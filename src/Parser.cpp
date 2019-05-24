@@ -82,6 +82,7 @@ void palmeidaprog::compiler::Parser::comando() {
 }
 
 void palmeidaprog::compiler::Parser::comandoBasico() {
+    // TODO: solve the wrong message on some cases (Invalid command)
     if(lookAhead->getToken() == Token::IDENTIFICADOR) {
         atribuicao();
     } else {
@@ -133,7 +134,7 @@ void palmeidaprog::compiler::Parser::iteracao() {
     }
 }
 
-void palmeidaprog::compiler::Parser::exprRelacional() {
+unique_ptr<palmeidaprog::compiler::SemanticReturn> palmeidaprog::compiler::Parser::exprRelacional() {
     exprAritmetica();
     if(operadorRelacional()) {
         proximoToken();
@@ -159,7 +160,7 @@ void palmeidaprog::compiler::Parser::atribuicao() {
     }
 }
 
-void palmeidaprog::compiler::Parser::exprAritmetica() {
+unique_ptr<palmeidaprog::compiler::SemanticReturn> palmeidaprog::compiler::Parser::exprAritmetica() {
     termo();
     if(lookAhead->getToken() == Token::SOMA
         || lookAhead->getToken() == Token::SUBSTRACAO) {
@@ -168,23 +169,31 @@ void palmeidaprog::compiler::Parser::exprAritmetica() {
     }
 }
 
-void palmeidaprog::compiler::Parser::termo() {
-    fator();
+unique_ptr<palmeidaprog::compiler::SemanticReturn> palmeidaprog::compiler::Parser::termo() {
+    auto semanticoFator = fator();
     if(lookAhead->getToken() == Token::MULTIPLICACAO
         || lookAhead->getToken() == Token::DIVISAO) {
+        Token operacao = lookAhead->getToken();
         proximoToken();
-        termo();
+        auto semanticoTermo = termo();
+
     }
+    return semanticoFator;
 }
 
-void palmeidaprog::compiler::Parser::fator() {
+unique_ptr<palmeidaprog::compiler::SemanticReturn>
+        palmeidaprog::compiler::Parser::fator() {
     if(isValor() || lookAhead->getToken() == Token::IDENTIFICADOR) {
+        auto semantico = make_unique<SemanticReturn>(lookAhead, escopo);
         proximoToken();
+        return semantico;
     } else if(lookAhead->getToken() == Token::ABRE_PARENTESES) {
         proximoToken();
-        exprAritmetica();
+        auto semantico = make_unique<SemanticReturn>(
+                exprAritmetica().release());
         if(lookAhead->getToken() == Token::FECHA_PARENTESES) {
             proximoToken();
+            return semantico;
         } else {
             exc("Parenteses malformado na expressão aritmética");
         }

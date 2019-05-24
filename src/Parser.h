@@ -18,6 +18,7 @@
 #include "ScannerException.h"
 #include "ParserException.h"
 #include "TabelaSimbolos.h"
+#include "SemanticReturn.h"
 
 using std::unique_ptr;
 using std::make_unique;
@@ -57,12 +58,12 @@ namespace palmeidaprog { namespace compiler {
         void declaracaoVar();
         void idVar();
         void iteracao();
-        void exprRelacional();
+        unique_ptr<SemanticReturn> exprRelacional();
         void condicionalWhile();
         void atribuicao();
-        void exprAritmetica();
-        void termo();
-        void fator();
+        unique_ptr<SemanticReturn> exprAritmetica();
+        unique_ptr<SemanticReturn> termo();
+        unique_ptr<SemanticReturn> fator();
         void condicionalIf();
         void exc(const string &msg);
 
@@ -87,6 +88,9 @@ namespace palmeidaprog { namespace compiler {
                    || lookAhead->getToken() == Token::LETRA
                    || lookAhead->getToken() == Token::INTEIRO;
         }
+
+        // -- Checagem tipo Semantico ----------------------------------------
+
     };
 }}
 
