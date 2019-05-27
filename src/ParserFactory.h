@@ -1,6 +1,9 @@
-//
-// Created by Paulo Roberto Almeida Filho on 3/30/19.
-//
+/*
+ * Compilador C++
+ * Paulo R. Almeida Filho
+ * <pauloalmeidaf@gmail.com>
+ * Compiladores - Prof Silvio Bandeira
+ * */
 
 #ifndef COMPILER_PARSERFACTORY_H
 #define COMPILER_PARSERFACTORY_H

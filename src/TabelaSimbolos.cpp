@@ -17,16 +17,21 @@ palmeidaprog::compiler::TabelaSimbolos::~TabelaSimbolos() {
 
 const palmeidaprog::compiler::Simbolo
 *palmeidaprog::compiler::TabelaSimbolos::procura(const string &identificador,
-            int escopo) const noexcept {
+            int escopo, bool apenasEscopoLocal) const noexcept {
     while(escopo >= 0) {
         auto it = tabela[escopo]->find(identificador);
         if(it != tabela[escopo].end()) {
             return it->second.get();
         }
+        if(apenasEscopoLocal) { // para o loop depois de 1 iteração
+            return nullptr;
+        }
         --escopo;
     }
     return nullptr;
 }
+
+
 
 void palmeidaprog::compiler::TabelaSimbolos::adiciona(
             Simbolo *identificador) {
@@ -51,5 +56,6 @@ void palmeidaprog::compiler::TabelaSimbolos::debug() const noexcept {
         }
     }
 }
+
 
 

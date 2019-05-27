@@ -23,4 +23,4 @@ add_executable(Compiler src/main.cpp
         src/ParserException.cpp src/ParserException.h
         src/Simbolo.cpp src/Simbolo.h
         src/TabelaSimbolos.cpp src/TabelaSimbolos.h
-        src/SemanticReturn.cpp src/SemanticReturn.h)
+        src/SemanticReturn.cpp src/SemanticReturn.h src/IncompatibleTypesException.cpp src/IncompatibleTypesException.h src/NotDeclaredException.cpp src/NotDeclaredException.h)

@@ -31,8 +31,8 @@ namespace palmeidaprog { namespace compiler {
         TabelaSimbolos() noexcept;
         virtual ~TabelaSimbolos();
 
-        const Simbolo *procura(const string &identificador, int escopo)
-                const noexcept;
+        const Simbolo *procura(const string &identificador, int escopo, bool
+                apenasEscopoLocal = false) const noexcept;
         void adiciona(Simbolo *identificador);
         void destroiEscopo(int escopo);
         void debug() const noexcept;

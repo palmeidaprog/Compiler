@@ -1,6 +1,9 @@
-//
-// Created by Paulo Roberto Almeida Filho on 4/14/19.
-//
+/*
+ * Compilador C++
+ * Paulo R. Almeida Filho
+ * <pauloalmeidaf@gmail.com>
+ * Compiladores - Prof Silvio Bandeira
+ * */
 
 #ifndef COMPILER_SIMBOLO_H
 #define COMPILER_SIMBOLO_H

@@ -1,6 +1,9 @@
-//
-// Created by Paulo Roberto Almeida Filho on 3/30/19.
-//
+/*
+ * Compilador C++
+ * Paulo R. Almeida Filho
+ * <pauloalmeidaf@gmail.com>
+ * Compiladores - Prof Silvio Bandeira
+ * */
 
 #include "ParserException.h"
 
@@ -8,8 +11,8 @@ const char *palmeidaprog::compiler::ParserException::what() const noexcept {
     return runtime_error::what();
 }
 
-palmeidaprog::compiler::ParserException::ParserException(const string &mensagem,
-        shared_ptr<ScannerReturn> erro) noexcept :
+palmeidaprog::compiler::ParserException::ParserException(const string
+        &mensagem, shared_ptr<ScannerReturn> erro) noexcept :
         runtime_error(mensagem), erro(erro) {
 }
 

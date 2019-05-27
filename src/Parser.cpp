@@ -169,14 +169,15 @@ unique_ptr<palmeidaprog::compiler::SemanticReturn> palmeidaprog::compiler::Parse
     }
 }
 
-unique_ptr<palmeidaprog::compiler::SemanticReturn> palmeidaprog::compiler::Parser::termo() {
+unique_ptr<palmeidaprog::compiler::SemanticReturn>
+        palmeidaprog::compiler::Parser::termo() {
     auto semanticoFator = fator();
     if(lookAhead->getToken() == Token::MULTIPLICACAO
         || lookAhead->getToken() == Token::DIVISAO) {
         Token operacao = lookAhead->getToken();
         proximoToken();
         auto semanticoTermo = termo();
-
+        
     }
     return semanticoFator;
 }
@@ -189,8 +190,7 @@ unique_ptr<palmeidaprog::compiler::SemanticReturn>
         return semantico;
     } else if(lookAhead->getToken() == Token::ABRE_PARENTESES) {
         proximoToken();
-        auto semantico = make_unique<SemanticReturn>(
-                exprAritmetica().release());
+        auto semantico = exprAritmetica();
         if(lookAhead->getToken() == Token::FECHA_PARENTESES) {
             proximoToken();
             return semantico;
@@ -267,6 +267,26 @@ void palmeidaprog::compiler::Parser::condicionalIf() {
 
 void palmeidaprog::compiler::Parser::debugTabela() const noexcept {
     tabela->debug();
+}
+
+unique_ptr<palmeidaprog::compiler::SemanticReturn>
+        palmeidaprog::compiler::Parser::checaTipos(
+            unique_ptr<palmeidaprog::compiler::SemanticReturn> id1,
+            unique_ptr<palmeidaprog::compiler::SemanticReturn> id2,
+            Token operacao) {
+    if(combinacaoTipos(*id1.get(), *id2.get(), Token::LETRA, Token::LETRA)) {
+        return move(id1);
+    } else if(combinacaoTipos(*id1.get(), *id2.get(), Token::LETRA, Token::FLOAT)) {
+        //TODO: Concluir chegacagem de tipos (Combinacao ou arranjo)
+    }
+}
+
+bool palmeidaprog::compiler::Parser::combinacaoTipos(
+        palmeidaprog::compiler::SemanticReturn &id1,
+        palmeidaprog::compiler::SemanticReturn &id2, Token tipo1,
+        Token tipo2) {
+    return (id1.getTipoGenerico() == tipo1 && id2.getTipoGenerico() == tipo2)
+        || (id1.getTipoGenerico() == tipo2 && id2.getTipoGenerico() == tipo1);
 }
 
 

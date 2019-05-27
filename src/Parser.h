@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <memory>
-#include <unordered_map>
 #include "IParser.h"
 #include "IScanner.h"
 #include "ScannerReturn.h"
@@ -26,13 +25,11 @@ using std::move;
 using std::string;
 using std::cout;
 using std::endl;
-using std::unordered_map;
 
 namespace palmeidaprog { namespace compiler {
     class Parser : public IParser {
         IScanner &scanner;
         unique_ptr<ScannerReturn> lookAhead;
-        //unordered_map<string, unique_ptr<Simbolo> > tabela;
         bool finalizado;
         Token tipoVar;
         unique_ptr<TabelaSimbolos> tabela;
@@ -66,6 +63,7 @@ namespace palmeidaprog { namespace compiler {
         unique_ptr<SemanticReturn> fator();
         void condicionalIf();
         void exc(const string &msg);
+        void excSemantico(const string &msg);
 
         bool isValor() {
             return lookAhead->getToken() == Token::VALOR_FLOAT
@@ -90,7 +88,10 @@ namespace palmeidaprog { namespace compiler {
         }
 
         // -- Checagem tipo Semantico ----------------------------------------
-
+        unique_ptr<SemanticReturn> checaTipos(unique_ptr<SemanticReturn> id1,
+                unique_ptr<SemanticReturn> id2, Token operacao);
+        bool combinacaoTipos(SemanticReturn &id1, SemanticReturn &id2,
+                Token tipo1, Token tipo2);
     };
 }}
 
