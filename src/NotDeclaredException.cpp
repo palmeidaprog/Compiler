@@ -10,8 +10,7 @@
 
 palmeidaprog::compiler::NotDeclaredException::
 NotDeclaredException(const string &mensagem,
-                           shared_ptr<palmeidaprog::compiler::SemanticReturn> erro,
-                           shared_ptr<palmeidaprog::compiler::SemanticReturn> var2) noexcept :
+                     shared_ptr<SemanticReturn> erro) noexcept :
         runtime_error(mensagem), erro(erro){
 }
 
@@ -20,15 +19,9 @@ palmeidaprog::compiler::NotDeclaredException::
 }
 
 const palmeidaprog::compiler::SemanticReturn &
-palmeidaprog::compiler::NotDeclaredException::getVar1() const
+palmeidaprog::compiler::NotDeclaredException::getErro() const
 noexcept {
     return *erro.get();
-}
-
-const palmeidaprog::compiler::SemanticReturn &
-palmeidaprog::compiler::NotDeclaredException::getVar2() const
-noexcept {
-    return *var2.get();
 }
 
 const char *palmeidaprog::compiler::NotDeclaredException::what() const

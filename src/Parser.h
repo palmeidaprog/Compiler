@@ -10,6 +10,7 @@
 #define COMPILER_PARSER_H
 
 #include <iostream>
+#include <sstream>
 #include <memory>
 #include "IParser.h"
 #include "IScanner.h"
@@ -18,12 +19,15 @@
 #include "ParserException.h"
 #include "TabelaSimbolos.h"
 #include "SemanticReturn.h"
+#include "NotDeclaredException.h"
+#include "IncompatibleTypesException.h"
 
 using std::unique_ptr;
 using std::make_unique;
 using std::move;
 using std::string;
 using std::cout;
+using std::stringstream;
 using std::endl;
 
 namespace palmeidaprog { namespace compiler {
@@ -33,7 +37,7 @@ namespace palmeidaprog { namespace compiler {
         bool finalizado;
         Token tipoVar;
         unique_ptr<TabelaSimbolos> tabela;
-        unsigned escopo;
+        unsigned escopo, tmpCont, labelCont;
 
     public:
         virtual ~Parser();
@@ -63,6 +67,9 @@ namespace palmeidaprog { namespace compiler {
         unique_ptr<SemanticReturn> fator();
         void condicionalIf();
         void exc(const string &msg);
+        void geradorCodigo(const string &codigoGerado) noexcept;
+        Token comparaSomaSub(const SemanticReturn &obj1, const
+                SemanticReturn &obj2, Token operacao);
         void excSemantico(const string &msg);
 
         bool isValor() {

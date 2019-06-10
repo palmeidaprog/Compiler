@@ -17,6 +17,8 @@ namespace palmeidaprog { namespace compiler {
 
     public:
         SemanticReturn(const ScannerReturn &scannerReturn, int escopo);
+        SemanticReturn(const ScannerReturn &scannerReturn, int escopo,
+                Token tipoGenerico);
         virtual ~SemanticReturn();
         int getEscopo() const noexcept {
             return escopo;

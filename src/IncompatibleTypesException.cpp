@@ -9,8 +9,8 @@
 
 palmeidaprog::compiler::IncompatibleTypesException::
         IncompatibleTypesException(const string &mensagem,
-        shared_ptr<palmeidaprog::compiler::SemanticReturn> var1,
-        shared_ptr<palmeidaprog::compiler::SemanticReturn> var2) noexcept :
+                                   shared_ptr<SemanticReturn> var1,
+                                   shared_ptr<SemanticReturn> var2) noexcept :
         runtime_error(mensagem), var1(var1), var2(var2){
 }
 
@@ -33,6 +33,12 @@ const palmeidaprog::compiler::SemanticReturn &
 const char *palmeidaprog::compiler::IncompatibleTypesException::what() const
         noexcept {
     return runtime_error::what();
+}
+
+palmeidaprog::compiler::IncompatibleTypesException::IncompatibleTypesException(
+        const string &mensagem, const palmeidaprog::compiler::SemanticReturn &var1,
+        const palmeidaprog::compiler::SemanticReturn &var2) noexcept {
+
 }
 
 // operacao impossivel

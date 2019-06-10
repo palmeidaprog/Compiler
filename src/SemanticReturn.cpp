@@ -11,8 +11,9 @@ palmeidaprog::compiler::SemanticReturn::SemanticReturn(const
         palmeidaprog::compiler::ScannerReturn &scannerReturn, int escopo) :
         ScannerReturn(scannerReturn), escopo(escopo),
         tipoGenerico(selecionaTipoGenerico(getToken())) {
-
 }
+
+
 
 palmeidaprog::compiler::SemanticReturn::~SemanticReturn() {
 
@@ -27,4 +28,11 @@ Token palmeidaprog::compiler::SemanticReturn::selecionaTipoGenerico(
     } else if(tipo == Token::LETRA || tipo == Token::LETRA_VALOR) {
         return Token::LETRA;
     }
+}
+
+palmeidaprog::compiler::SemanticReturn::SemanticReturn(
+        const palmeidaprog::compiler::ScannerReturn &scannerReturn,
+        int escopo, Token tipoGenerico) : ScannerReturn(scannerReturn),
+        escopo(escopo), tipoGenerico(selecionaTipoGenerico(tipoGenerico)) {
+
 }

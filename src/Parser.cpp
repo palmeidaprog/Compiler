@@ -6,10 +6,12 @@
  * */
 
 #include "Parser.h"
+#include "IncompatibleTypesException.h"
 
 palmeidaprog::compiler::Parser::Parser(palmeidaprog::compiler::IScanner
     &scanner) : scanner(scanner), finalizado(false),
-    tabela(make_unique<TabelaSimbolos>()), escopo(0) {
+    tabela(make_unique<TabelaSimbolos>()), escopo(0), tmpCont(1),
+    labelCont(1) {
 }
 
 palmeidaprog::compiler::Parser::~Parser() {
@@ -185,7 +187,23 @@ unique_ptr<palmeidaprog::compiler::SemanticReturn>
 unique_ptr<palmeidaprog::compiler::SemanticReturn>
         palmeidaprog::compiler::Parser::fator() {
     if(isValor() || lookAhead->getToken() == Token::IDENTIFICADOR) {
-        auto semantico = make_unique<SemanticReturn>(lookAhead, escopo);
+        unique_ptr<SemanticReturn> semantico;
+        if(lookAhead->getToken() == Token::IDENTIFICADOR) {
+            unique_ptr<Simbolo> simb = tabela->procura(lookAhead->getLexema(), escopo);
+            if(simb == nullptr) {
+                stringstream s;
+                s << "Variável " << lookAhead->getLexema() << "não foi " <<
+                        "declarada";
+                semantico = make_unique<SemanticReturn>(lookAhead, escopo);
+                throw NotDeclaredException(s.str(), move(semantico));
+            } else {
+                semantico = make_unique<SemanticReturn>(lookAhead, escopo,
+                        simb->getTipo());
+            }
+        }
+        stringstream r;
+        r << "t" << tmpCont << " = " << semantico->getLexema();
+        geradorCodigo(r.str());
         proximoToken();
         return semantico;
     } else if(lookAhead->getToken() == Token::ABRE_PARENTESES) {
@@ -288,6 +306,33 @@ bool palmeidaprog::compiler::Parser::combinacaoTipos(
     return (id1.getTipoGenerico() == tipo1 && id2.getTipoGenerico() == tipo2)
         || (id1.getTipoGenerico() == tipo2 && id2.getTipoGenerico() == tipo1);
 }
+
+void palmeidaprog::compiler::Parser::geradorCodigo(const string &codigoGerado)
+        noexcept {
+    cout << codigoGerado << endl;
+}
+
+Token
+palmeidaprog::compiler::Parser::comparaSomaSub(
+        const palmeidaprog::compiler::SemanticReturn &obj1,
+        const palmeidaprog::compiler::SemanticReturn &obj2, Token operacao) {
+    if(obj1.getTipoGenerico() == obj2.getTipoGenerico()) {
+        return obj1.getTipoGenerico();
+    } else if(obj1.getTipoGenerico() == Token::LETRA ||
+            obj2.getTipoGenerico() == Token::LETRA) {
+        stringstream s;
+        s << "Tipo char só pode " <<
+            (operacao == Token::SOMA ? "somar " : "subtrair ") << "com outro"
+            << " char";
+        throw IncompatibleTypesException(s.str(), obj1, obj2);
+    } else if(obj1.getTipoGenerico() == Token::FLOAT ||
+        obj2.getTipoGenerico() == Token::FLOAT) {
+        return Token::FLOAT;
+    } else {
+        return Token::INTEIRO;
+    }
+}
+
 
 
 

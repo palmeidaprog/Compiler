@@ -13,6 +13,7 @@
 #include "SemanticReturn.h"
 
 using std::shared_ptr;
+using std::unique_ptr;
 
 namespace palmeidaprog { namespace compiler {
     class IncompatibleTypesException : public std::runtime_error  {
@@ -20,8 +21,11 @@ namespace palmeidaprog { namespace compiler {
 
     public:
         IncompatibleTypesException(const string &mensagem,
-                shared_ptr<SemanticReturn> var1,
-                shared_ptr<SemanticReturn> var2) noexcept;
+                                   shared_ptr<SemanticReturn> var1,
+                                   shared_ptr<SemanticReturn> var2) noexcept;
+        IncompatibleTypesException(const string &mensagem,
+               const SemanticReturn &var1,
+               const SemanticReturn &var2) noexcept;
         virtual ~IncompatibleTypesException();
 
         const SemanticReturn &getVar1() const noexcept;

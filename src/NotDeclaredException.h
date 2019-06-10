@@ -10,6 +10,7 @@
 #include "SemanticReturn.h"
 
 using std::shared_ptr;
+using std::unique_ptr;
 
 namespace palmeidaprog { namespace compiler {
     class NotDeclaredException : public std::runtime_error  {
@@ -17,7 +18,7 @@ namespace palmeidaprog { namespace compiler {
 
     public: //TODO: use 2 semantic return and operator to define the operation
         NotDeclaredException(const string &mensagem,
-        shared_ptr<SemanticReturn> erro) noexcept;
+                             shared_ptr<SemanticReturn> erro) noexcept;
         virtual ~NotDeclaredException();
 
         const SemanticReturn &getErro() const noexcept;

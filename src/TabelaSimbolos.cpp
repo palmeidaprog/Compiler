@@ -15,13 +15,13 @@ palmeidaprog::compiler::TabelaSimbolos::~TabelaSimbolos() {
 
 }
 
-const palmeidaprog::compiler::Simbolo
-*palmeidaprog::compiler::TabelaSimbolos::procura(const string &identificador,
-            int escopo, bool apenasEscopoLocal) const noexcept {
+unique_ptr<palmeidaprog::compiler::Simbolo>
+palmeidaprog::compiler::TabelaSimbolos::procura(const string &identificador,
+                                                int escopo, bool apenasEscopoLocal) const noexcept {
     while(escopo >= 0) {
         auto it = tabela[escopo]->find(identificador);
         if(it != tabela[escopo].end()) {
-            return it->second.get();
+            return make_unique<Simbolo>(it->second.get());
         }
         if(apenasEscopoLocal) { // para o loop depois de 1 iteração
             return nullptr;
