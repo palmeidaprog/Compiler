@@ -41,11 +41,11 @@ namespace palmeidaprog { namespace compiler {
     };
 
 
-    ostream& operator<<(ostream &out, const Simbolo &simbolo) {
-        out << simbolo.escopo << "\t" << simbolo.identificador << "\t";
-        //out << simbolo.tipo; TODO: fix the overloading of operator in Token
-        return out;
-    }
+//    ostream& operator<<(ostream &out, const Simbolo &simbolo) {
+//        out << simbolo.escopo << "\t" << simbolo.identificador << "\t";
+//        //out << simbolo.tipo; TODO: fix the overloading of operator in Token
+//        return out;
+//    }
 }}
 
 

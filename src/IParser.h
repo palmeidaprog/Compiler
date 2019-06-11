@@ -24,9 +24,10 @@ namespace palmeidaprog { namespace compiler {
     public:
         // virtual Tabela &getTabela() = 0
         //virtual ArvoreGramatica<Scanner>
+        //virtual ~IParser() = 0;
         virtual void parse() = 0;
         virtual bool isFinalizado() const = 0;
-        virtual const Simbolo *getSimbolo(string identificador) const = 0;
+        //virtual const Simbolo *getSimbolo(string identificador) const = 0;
         virtual void debugTabela() const noexcept = 0;
     };
 

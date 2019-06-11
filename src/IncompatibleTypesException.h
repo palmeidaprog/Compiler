@@ -13,6 +13,7 @@
 #include "SemanticReturn.h"
 
 using std::shared_ptr;
+using std::make_shared;
 using std::unique_ptr;
 
 namespace palmeidaprog { namespace compiler {

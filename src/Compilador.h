@@ -42,9 +42,9 @@ namespace palmeidaprog { namespace compiler {
 
         void compilar();
     private:
-        void debugScanner();
+        //void debugScanner();
         void tokenToStr(Token token);
-        void debugTabela();
+        //void debugTabela();
     };
 }}
 

@@ -18,8 +18,12 @@ namespace palmeidaprog { namespace compiler {
     public:
         SemanticReturn(const ScannerReturn &scannerReturn, int escopo);
         SemanticReturn(const ScannerReturn &scannerReturn, int escopo,
+                const string &lexema, Token tipo);
+        SemanticReturn(const ScannerReturn &scannerReturn, int escopo,
                 Token tipoGenerico);
+        SemanticReturn(const SemanticReturn &s);
         virtual ~SemanticReturn();
+
         int getEscopo() const noexcept {
             return escopo;
         }
@@ -27,6 +31,7 @@ namespace palmeidaprog { namespace compiler {
         Token getTipoGenerico() const noexcept {
             return tipoGenerico;
         }
+
 
     private:
         Token selecionaTipoGenerico(Token tipo);

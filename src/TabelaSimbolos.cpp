@@ -20,8 +20,8 @@ palmeidaprog::compiler::TabelaSimbolos::procura(const string &identificador,
                                                 int escopo, bool apenasEscopoLocal) const noexcept {
     while(escopo >= 0) {
         auto it = tabela[escopo]->find(identificador);
-        if(it != tabela[escopo].end()) {
-            return make_unique<Simbolo>(it->second.get());
+        if(it != tabela[escopo]->end()) {
+            return make_unique<Simbolo>(*it->second.get());
         }
         if(apenasEscopoLocal) { // para o loop depois de 1 iteração
             return nullptr;
@@ -40,7 +40,7 @@ void palmeidaprog::compiler::TabelaSimbolos::adiciona(
     }
     tabela[identificador->getEscopo()]->emplace(
             identificador->getIdentificador(),
-            make_unique<Simbolo>(identificador));
+            unique_ptr<Simbolo>(identificador));
 }
 
 void palmeidaprog::compiler::TabelaSimbolos::destroiEscopo(int escopo) {
@@ -51,8 +51,8 @@ void palmeidaprog::compiler::TabelaSimbolos::destroiEscopo(int escopo) {
 
 void palmeidaprog::compiler::TabelaSimbolos::debug() const noexcept {
     for(int i = 0; i < tabela.size(); i++) {
-        for(auto it = tabela[i].begin(); it != tabela[i].cend(); it++) {
-            cout << *(it->second.get()) << endl;
+        for(auto it = tabela[i]->begin(); it != tabela[i]->cend(); it++) {
+            //cout << *(it->second.get()) << endl;
         }
     }
 }

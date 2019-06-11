@@ -59,8 +59,8 @@ namespace palmeidaprog { namespace compiler {
         void declaracaoVar();
         void idVar();
         void iteracao();
-        unique_ptr<SemanticReturn> exprRelacional();
-        void condicionalWhile();
+        const string exprRelacional();
+        const string condicionalWhile();
         void atribuicao();
         unique_ptr<SemanticReturn> exprAritmetica();
         unique_ptr<SemanticReturn> termo();
@@ -68,9 +68,19 @@ namespace palmeidaprog { namespace compiler {
         void condicionalIf();
         void exc(const string &msg);
         void geradorCodigo(const string &codigoGerado) noexcept;
-        Token comparaSomaSub(const SemanticReturn &obj1, const
-                SemanticReturn &obj2, Token operacao);
-        void excSemantico(const string &msg);
+        Token comparaOperacao(const SemanticReturn &obj1, const
+                SemanticReturn &obj2, ScannerReturn &operacao);
+        Token comparaDivisao(const SemanticReturn &obj1,
+                const SemanticReturn &obj2);
+        void validaAtribuicao(const SemanticReturn &lhs,
+                              const SemanticReturn &rhs);
+        void validaRelacional(const SemanticReturn &exp1,
+                              const SemanticReturn &exp2);
+        const string getProxTmp() noexcept;
+        const string getProxLabel() noexcept;
+        const string nomeTipo(Token tipo) const;
+        const string msgValidaAtribuicao(const string &tipo1,
+                const string &tipo2);
 
         bool isValor() {
             return lookAhead->getToken() == Token::VALOR_FLOAT
@@ -99,7 +109,7 @@ namespace palmeidaprog { namespace compiler {
                 unique_ptr<SemanticReturn> id2, Token operacao);
         bool combinacaoTipos(SemanticReturn &id1, SemanticReturn &id2,
                 Token tipo1, Token tipo2);
-    };
+     };
 }}
 
 

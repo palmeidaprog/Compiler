@@ -29,7 +29,3 @@ noexcept {
     return runtime_error::what();
 }
 
-// operacao impossivel
-// atribuicao impossivel
-// variavel nao declarada
-//

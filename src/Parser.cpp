@@ -100,12 +100,13 @@ void palmeidaprog::compiler::Parser::declaracaoVar() {
 }
 
 
-void palmeidaprog::compiler::Parser::condicionalWhile() {
+const string palmeidaprog::compiler::Parser::condicionalWhile() {
     if (lookAhead->getToken() == Token::ABRE_PARENTESES) {
         proximoToken();
-        exprRelacional();
+        string expressao = exprRelacional();
         if (lookAhead->getToken() == Token::FECHA_PARENTESES) {
             proximoToken();
+            return expressao;
         } else {
             exc("Parenteses não fechado na condicional do while");
         }
@@ -116,14 +117,21 @@ void palmeidaprog::compiler::Parser::condicionalWhile() {
 
 void palmeidaprog::compiler::Parser::iteracao() {
     if(lookAhead->getToken() == Token::DO) {
+        stringstream s;
+        string l = getProxLabel();
+        s << "\nEscopoDO_" << l << ":";
+        geradorCodigo(s.str());
         proximoToken();
         comando();
         if(lookAhead->getToken() == Token::WHILE) {
             proximoToken();
-            condicionalWhile();
+            s.str(string());
+            s << "if " << condicionalWhile() << " goto " << "EscopoDO_" << l
+                << endl;
             if(lookAhead->getToken() != Token::PONTO_VIRGULA) {
                 exc("Esperado \";\" após a condicional de um do-while");
             } else {
+                geradorCodigo(s.str());
                 proximoToken();
             }
         } else {
@@ -131,28 +139,57 @@ void palmeidaprog::compiler::Parser::iteracao() {
         }
     } else if(lookAhead->getToken() == Token::WHILE) {
         proximoToken();
-        condicionalWhile();
+        stringstream s;
+        string l = getProxLabel();
+        s << "\nTesteWHILE_" << l << ":" << endl;
+        s << "if " << condicionalWhile() << " goto EscopoWHILE_" << l << endl
+            << "goto SaidaWHILE_" << l << endl << "EscopoWHILE_" << l << ":";
+        geradorCodigo(s.str());
         comando();
+        s.str(string());
+        s << "goto TesteWHILE_" << l << endl
+            << "SaidaWHILE_" << l << ":\n";
+        geradorCodigo(s.str());
     }
 }
 
-unique_ptr<palmeidaprog::compiler::SemanticReturn> palmeidaprog::compiler::Parser::exprRelacional() {
-    exprAritmetica();
+const string palmeidaprog::compiler::Parser::exprRelacional() {
+    stringstream s;
+    auto exp1 = exprAritmetica();
+    s << exp1->getLexema() << " ";
+
     if(operadorRelacional()) {
+        auto op = make_unique<SemanticReturn>(*lookAhead, escopo);
+        s << op->getLexema();
         proximoToken();
-        exprAritmetica();
+        auto exp2 = exprAritmetica();
+        validaRelacional(*exp1, *exp2);
+        s << " " << exp2->getLexema();
     } else {
         exc("Esperado operador relacional (<,>,>=.<=,==,!=) após expressão");
     }
-
+    return s.str();
 }
 
 void palmeidaprog::compiler::Parser::atribuicao() {
+    auto simbolo = tabela->procura(lookAhead->getLexema(), escopo);
+    if(simbolo == nullptr) {
+        stringstream s;
+        s << "Variavel não foi declarada";
+        throw NotDeclaredException(s.str(),
+                make_unique<SemanticReturn>(*lookAhead, escopo));
+    }
+    auto lhs = make_unique<SemanticReturn>(*lookAhead, escopo,
+            simbolo->getTipo());
     proximoToken();
     if(lookAhead->getToken() == Token::ATRIBUICAO) {
         proximoToken();
-        exprAritmetica();
+        auto rhs = exprAritmetica();
         if(lookAhead->getToken() == Token::PONTO_VIRGULA) {
+            validaAtribuicao(*lhs, *rhs);
+            stringstream s;
+            s << lhs->getLexema() << " = " << rhs->getLexema();
+            geradorCodigo(s.str());
             proximoToken();
         } else {
             exc("Esperado ; apos atribuição");
@@ -162,26 +199,68 @@ void palmeidaprog::compiler::Parser::atribuicao() {
     }
 }
 
-unique_ptr<palmeidaprog::compiler::SemanticReturn> palmeidaprog::compiler::Parser::exprAritmetica() {
-    termo();
+
+void palmeidaprog::compiler::Parser::validaAtribuicao(
+        const palmeidaprog::compiler::SemanticReturn &lhs,
+        const palmeidaprog::compiler::SemanticReturn &rhs) {
+    if((lhs.getTipoGenerico() == Token::LETRA &&
+            rhs.getTipoGenerico() != Token::LETRA)
+        || (lhs.getTipoGenerico() == Token::INTEIRO &&
+            rhs.getTipoGenerico() != Token::INTEIRO)
+        || (lhs.getTipoGenerico() == Token::FLOAT &&
+            rhs.getTipoGenerico() == Token::LETRA)) {
+        throw IncompatibleTypesException(msgValidaAtribuicao(
+                nomeTipo(lhs.getTipoGenerico()),
+                nomeTipo(rhs.getTipoGenerico())), lhs, rhs);
+    }
+}
+
+unique_ptr<palmeidaprog::compiler::SemanticReturn>
+        palmeidaprog::compiler::Parser::exprAritmetica() {
+    auto semanticoTermo = termo();
     if(lookAhead->getToken() == Token::SOMA
         || lookAhead->getToken() == Token::SUBSTRACAO) {
+        auto op = move(lookAhead);
         proximoToken();
-        exprAritmetica();
+        auto semanticoExpr = exprAritmetica();
+        stringstream s;
+        string t = getProxTmp();
+        s << t << " = " << semanticoTermo->getLexema() << " "
+          << op->getLexema() << " ";
+        s << semanticoExpr->getLexema();
+        Token tipo = comparaOperacao(*semanticoTermo, *semanticoExpr, *op);
+        geradorCodigo(s.str());
+        return make_unique<SemanticReturn>(*semanticoTermo, escopo, t, tipo);
     }
+    return move(semanticoTermo);
 }
 
 unique_ptr<palmeidaprog::compiler::SemanticReturn>
         palmeidaprog::compiler::Parser::termo() {
     auto semanticoFator = fator();
-    if(lookAhead->getToken() == Token::MULTIPLICACAO
+
+    while(lookAhead->getToken() == Token::MULTIPLICACAO
         || lookAhead->getToken() == Token::DIVISAO) {
-        Token operacao = lookAhead->getToken();
+        stringstream s, f;
+
+        auto op = move(lookAhead);
         proximoToken();
-        auto semanticoTermo = termo();
-        
+        auto semanticoTermo = fator();
+        Token tipo;
+        if(op->getToken() == Token::DIVISAO) {
+            tipo = comparaDivisao(*semanticoFator, *semanticoTermo);
+        } else {
+            tipo = comparaOperacao(*semanticoFator, *semanticoTermo, *op);
+        }
+        string t = getProxTmp();
+        s << t << " = " << semanticoFator->getLexema() << " " <<
+          op->getLexema() << " ";
+        s << semanticoTermo->getLexema();
+        semanticoFator = make_unique<SemanticReturn>(*lookAhead, escopo, t,
+                tipo);
+        geradorCodigo(s.str());
     }
-    return semanticoFator;
+    return move(semanticoFator);
 }
 
 unique_ptr<palmeidaprog::compiler::SemanticReturn>
@@ -194,24 +273,23 @@ unique_ptr<palmeidaprog::compiler::SemanticReturn>
                 stringstream s;
                 s << "Variável " << lookAhead->getLexema() << "não foi " <<
                         "declarada";
-                semantico = make_unique<SemanticReturn>(lookAhead, escopo);
+                semantico = make_unique<SemanticReturn>(*lookAhead, escopo);
                 throw NotDeclaredException(s.str(), move(semantico));
             } else {
-                semantico = make_unique<SemanticReturn>(lookAhead, escopo,
+                semantico = make_unique<SemanticReturn>(*lookAhead, escopo,
                         simb->getTipo());
             }
+        } else {
+            semantico = make_unique<SemanticReturn>(*lookAhead, escopo);
         }
-        stringstream r;
-        r << "t" << tmpCont << " = " << semantico->getLexema();
-        geradorCodigo(r.str());
         proximoToken();
-        return semantico;
+        return move(semantico);
     } else if(lookAhead->getToken() == Token::ABRE_PARENTESES) {
         proximoToken();
         auto semantico = exprAritmetica();
         if(lookAhead->getToken() == Token::FECHA_PARENTESES) {
             proximoToken();
-            return semantico;
+            return move(semantico);
         } else {
             exc("Parenteses malformado na expressão aritmética");
         }
@@ -265,14 +343,25 @@ void palmeidaprog::compiler::Parser::condicionalIf() {
         proximoToken();
         if(lookAhead->getToken() == Token::ABRE_PARENTESES) {
             proximoToken();
-            exprRelacional();
+            stringstream s;
+            string l = getProxLabel();
+
+            s << "\nif " << exprRelacional() << " goto EscopoIF_" << l << endl <<
+                "goto EscopoELSE_" << l << endl << "EscopoIF_" << l << ":";
             if(lookAhead->getToken() == Token::FECHA_PARENTESES) {
                 proximoToken();
+                geradorCodigo(s.str());
+                s.str(string());
                 comando();
+                s << "goto SAIDA_" << l << endl << "EscopoELSE_" << l << ":";
+                geradorCodigo(s.str());
+                s.str(string());
                 if(lookAhead->getToken() == Token::ELSE) {
                     proximoToken();
                     comando();
                 }
+                s << "Saida_" << l << ":\n";
+                geradorCodigo(s.str());
             } else {
                 exc(string("Parenteses malformado, fecha parenteses esperado")
                             .append(" após condicional do if"));
@@ -312,24 +401,91 @@ void palmeidaprog::compiler::Parser::geradorCodigo(const string &codigoGerado)
     cout << codigoGerado << endl;
 }
 
-Token
-palmeidaprog::compiler::Parser::comparaSomaSub(
+Token palmeidaprog::compiler::Parser::comparaOperacao(
         const palmeidaprog::compiler::SemanticReturn &obj1,
-        const palmeidaprog::compiler::SemanticReturn &obj2, Token operacao) {
+        const palmeidaprog::compiler::SemanticReturn &obj2,
+        ScannerReturn &operacao) {
     if(obj1.getTipoGenerico() == obj2.getTipoGenerico()) {
         return obj1.getTipoGenerico();
     } else if(obj1.getTipoGenerico() == Token::LETRA ||
             obj2.getTipoGenerico() == Token::LETRA) {
         stringstream s;
-        s << "Tipo char só pode " <<
-            (operacao == Token::SOMA ? "somar " : "subtrair ") << "com outro"
-            << " char";
+        s << "Tipo char só pode ";
+        if(operacao.getToken() == Token::SOMA) {
+            s << "somar ";
+        } else if(operacao.getToken() == Token::SUBSTRACAO) {
+            s << "subtrair ";
+        } else {
+            s << "multiplicar ";
+        }
+        s << "com outro" << " char";
         throw IncompatibleTypesException(s.str(), obj1, obj2);
     } else if(obj1.getTipoGenerico() == Token::FLOAT ||
         obj2.getTipoGenerico() == Token::FLOAT) {
         return Token::FLOAT;
     } else {
         return Token::INTEIRO;
+    }
+}
+
+Token palmeidaprog::compiler::Parser::comparaDivisao(
+        const palmeidaprog::compiler::SemanticReturn &obj1,
+        const palmeidaprog::compiler::SemanticReturn &obj2) {
+    if(obj1.getTipoGenerico() == Token::LETRA &&
+        obj2.getTipoGenerico() == Token::LETRA) {
+        return Token::LETRA;
+    } else if(obj1.getTipoGenerico() == Token::LETRA ||
+              obj2.getTipoGenerico() == Token::LETRA) {
+        stringstream s;
+        s << "Tipo char só pode dividir com outro tipo char";
+        throw IncompatibleTypesException(s.str(), obj1, obj2);
+    } else {
+        return Token::FLOAT;
+    }
+}
+
+const string palmeidaprog::compiler::Parser::getProxTmp() noexcept {
+    stringstream s;
+    s << "t" << tmpCont++;
+    return s.str();
+}
+
+const string palmeidaprog::compiler::Parser::getProxLabel() noexcept {
+    stringstream s;
+    s << labelCont++;
+    return s.str();
+}
+
+const string palmeidaprog::compiler::Parser::nomeTipo(Token tipo) const {
+    switch(tipo) {
+        case Token::LETRA:
+            return "char";
+        case Token::FLOAT:
+            return "float";
+        case Token::INTEIRO:
+            return "inteiro";
+        default:
+            return ""; // logicamente inalcançavel
+    }
+}
+
+const string palmeidaprog::compiler::Parser::msgValidaAtribuicao(
+        const string &tipo1, const string &tipo2) {
+    stringstream s;
+    s << "Variavel " << tipo1 << " não pode receber valor " <<
+        tipo2;
+    return s.str();
+}
+
+void palmeidaprog::compiler::Parser::validaRelacional(
+        const palmeidaprog::compiler::SemanticReturn &exp1,
+        const palmeidaprog::compiler::SemanticReturn &exp2) {
+    if((exp1.getTipoGenerico() == Token::LETRA &&
+        exp2.getTipoGenerico() != Token::LETRA) ||
+        (exp1.getTipoGenerico() != Token::LETRA &&
+        exp2.getTipoGenerico() == Token::LETRA)) {
+        throw IncompatibleTypesException(
+                string("Char só pode ser comparado com char"), exp1, exp2);
     }
 }
 

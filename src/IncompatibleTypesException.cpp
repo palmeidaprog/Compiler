@@ -37,11 +37,8 @@ const char *palmeidaprog::compiler::IncompatibleTypesException::what() const
 
 palmeidaprog::compiler::IncompatibleTypesException::IncompatibleTypesException(
         const string &mensagem, const palmeidaprog::compiler::SemanticReturn &var1,
-        const palmeidaprog::compiler::SemanticReturn &var2) noexcept {
+        const palmeidaprog::compiler::SemanticReturn &var2) noexcept :
+        runtime_error(mensagem), var1(make_shared<SemanticReturn>(var1)),
+        var2(make_shared<SemanticReturn>(var2)) {
 
 }
-
-// operacao impossivel
-// atribuicao impossivel
-// variavel nao declarada
-//
